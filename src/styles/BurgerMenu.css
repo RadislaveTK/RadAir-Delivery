@@ -1,0 +1,97 @@
+.burger-menu {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.burger-menu img {
+  width: 50px;
+  height: 30px;
+}
+
+.burger-container {
+  position: relative;
+}
+
+.burger-menu {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  position: fixed;
+  z-index: 2;
+  top: 25px;
+  left: 10px;
+}
+
+.menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background: #963736;
+  color: white;
+  box-shadow: 4px 0px 10px 0px rgba(0, 0, 0, 0.25);
+  transition: left 0.3s ease-in-out;
+  padding: 20px;
+  padding-top: 200px;
+  z-index: 1;
+  border-right: #ff9800 5px solid;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.menu.open {
+  left: 0;
+  box-shadow: 270px 0px 50px 0px rgba(0, 0, 0, 0.3);
+  transition: 0.5s all;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin: 20px 0;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 22px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
+
+.menu-ad {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.menu-ad>span {
+  color: #ff9800;
+  font-size: 19px;
+}
+
+.menu-img {
+  width: 30px;
+  height: 30px;
+}
