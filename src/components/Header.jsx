@@ -6,7 +6,12 @@ import "../styles/Header.css";
 
 export default function Header() {
   return (
-    <div className="header">
+    <div style={{
+          width: "100%",
+          position: "absolute",
+          left: 0,
+          top: 0,
+    }}>
       <header>
         
         <Link className="logo" to="/">

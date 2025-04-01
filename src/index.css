@@ -6,11 +6,12 @@
   font-family: "Nunito", serif;
 }
 
-html, body {
+html,
+body {
   display: flex;
   position: relative;
   height: 100%;
-  width: 100%;  
+  width: 100%;
   justify-content: center;
   align-items: center;
 }
@@ -22,4 +23,209 @@ html, body {
   /* border: 2px solid;
   border-radius: 15px;
   overflow: auto; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  width: 100%;
+  height: 100%;
+  /* padding-top: 100px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.auth {
+  background: #963736;
+}
+
+.auth-block {
+  background: #fff;
+  width: 90%;
+  height: 85%;
+  border-radius: 35px;
+  border: 5px solid #ff9800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 55px;
+  padding: 30%;
+}
+
+/* .auth-input-div {
+  height: 50px;
+  width: 330px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.auth-input-div > label {
+  width: 35px;
+  height: 100%;
+  background: #282828;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #FF9800;
+  border-right: none;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+
+}
+
+.auth-input-div > input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #FF9800;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #963736;
+  color: #fff;
+  padding-left: 10px;
+  font-size: 20px;
+
+}
+
+.auth-input-div > input::placeholder {
+  color: #fff;
+  opacity: 50%;
+  font-size: 15px;
+}
+
+.auth-input-div > input:focus-visible, input:focus {
+  border: 2px solid #FF9800;
+  outline: none;
+}
+
+.auth-input-div:focus-within label {
+  border: 2px solid#FF9800;
+} */
+
+.auth-input-div {
+  height: 50px;
+  width: 330px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 4px 0px rgba(34, 60, 80, 0.25);
+}
+
+.auth-input-div > label {
+  width: 35px;
+  height: 100%;
+  background: #282828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ff9800;
+  border-right: none;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.auth-input-div > input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ff9800;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: #963736;
+  color: #fff;
+  padding-left: 10px;
+  font-size: 15px;
+  transition: all 1s linear;
+}
+
+.auth-input-div > input::placeholder {
+  color: #fff;
+  opacity: 50%;
+  font-size: 12px;
+}
+
+.auth-input-div > input:focus-visible,
+.auth-input-div > input:focus {
+  border: 2px solid #ff9800;
+  outline: none;
+}
+
+.auth-input-div:focus-within input::placeholder {
+  font-size: 15px;
+  transition: all 0.3s linear;
+}
+
+.auth-input-div:focus-within label {
+  background: #ff9800;
+  border-color: #ff9800;
+}
+
+.auth-input-div:focus-within label img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #963736;
+  border-radius: 10px;
+  border: 2px solid #ff9800;
+  font-size: 12px;
+  transition: all 0.3s;
+  box-shadow: 0px 4px 4px 0px rgba(34, 60, 80, 0.25);
+}
+
+.btn:disabled {
+  opacity: 90%;
+}
+
+#inp_req[type="checkbox"] {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #963736;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  margin: 0;
+}
+
+#inp_req[type="checkbox"]:checked {
+  /* стили для выбранного состояния */
+  background-color: #963736;
+  border-color: #632424;
+  background-image: url(/public/assets/icons/checkbox.svg);
+  background-position: center;
+  background-origin: border-box;
+  background-size: contain;
+}
+
+.inp_req[type="checkbox"]:active {
+  filter: brightness(90%);
+}
+
+.inp-text {
+  text-security: none;
+  -webkit-text-security: none;
+  -mox-text-security: none;
+}
+
+.inp-password {
+  text-security: circle;
+  -webkit-text-security: circle;
+  -mox-text-security: circle;
 }
