@@ -26,7 +26,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
+}
+
+.display::before {
+  opacity: 0.5;
 }
 
 main {
@@ -46,70 +50,30 @@ main {
 .auth-block {
   background: #fff;
   width: 90%;
+  max-width: 500px;
+  min-width: 300px;
+  max-height: 700px;
+  min-height: 600px;
   height: 85%;
   border-radius: 35px;
   border: 5px solid #ff9800;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 55px;
-  padding: 30%;
-}
-
-/* .auth-input-div {
-  height: 50px;
-  width: 330px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.auth-input-div > label {
-  width: 35px;
-  height: 100%;
-  background: #282828;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  border: 1px solid #FF9800;
-  border-right: none;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-
+  gap: 55px;
+  padding: 10% 0;
+  transition: 1s transform;
 }
 
-.auth-input-div > input {
-  width: 100%;
-  height: 100%;
-  border: 1px solid #FF9800;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: #963736;
-  color: #fff;
-  padding-left: 10px;
-  font-size: 20px;
-
-}
-
-.auth-input-div > input::placeholder {
-  color: #fff;
-  opacity: 50%;
-  font-size: 15px;
-}
-
-.auth-input-div > input:focus-visible, input:focus {
-  border: 2px solid #FF9800;
-  outline: none;
-}
-
-.auth-input-div:focus-within label {
-  border: 2px solid#FF9800;
+/* .auth-block:hover {
+  transform: scale(1.05);
 } */
 
 .auth-input-div {
   height: 50px;
-  width: 330px;
+  width: 90%;
+  max-width: 350px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -138,6 +102,8 @@ main {
   border: 1px solid #ff9800;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
   background-color: #963736;
   color: #fff;
   padding-left: 10px;
@@ -154,6 +120,7 @@ main {
 .auth-input-div > input:focus-visible,
 .auth-input-div > input:focus {
   border: 2px solid #ff9800;
+  transition: border 0s linear;
   outline: none;
 }
 
@@ -185,6 +152,10 @@ main {
   font-size: 12px;
   transition: all 0.3s;
   box-shadow: 0px 4px 4px 0px rgba(34, 60, 80, 0.25);
+}
+
+.btn:active {
+  opacity: 90%;
 }
 
 .btn:disabled {
@@ -225,7 +196,86 @@ main {
 }
 
 .inp-password {
-  text-security: circle;
-  -webkit-text-security: circle;
-  -mox-text-security: circle;
+  text-security: disc;
+  -webkit-text-security: disc;
+  -mox-text-security: disc;
+}
+
+.search {
+  width: 70%;
+  max-width: 300px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  margin-top: 150px;
+}
+
+.search > label {
+  z-index: 2;
+  position: absolute;
+  left: 5%;
+  top: 25%;
+}
+
+.inp {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #963736;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #000;
+  font-size: 18px;
+  transition: all 0.5s linear;
+  z-index: 1;
+}
+
+#inp_search {
+  padding: 0 10px 0 45px;
+  box-shadow: 2px 2px 0px 0px rgba(255, 152, 0, 1),
+    4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+#inp_search:focus-visible,
+#inp_search:focus {
+  border: 3px solid #965958;
+  transition: all 0.5s linear;
+  outline: none;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.heading {
+  font-family: "Pacifico", cursive;
+  font-size: 45px;
+  font-weight: 400;
+  color: #963736;
+  text-shadow: 2px 2px 0px rgba(255, 152, 0, 1), 3px 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.heading-p {
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.card {
+  width: auto;
+  height: auto;
+  border-radius: 20px;
+  border: 2px solid #963736;
+  background-color: #fff;
+  padding: 5px;
+  box-shadow: 2px 2px 0px 0px rgba(255, 152, 0, 1),
+    4px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }

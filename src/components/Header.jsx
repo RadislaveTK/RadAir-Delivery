@@ -8,9 +8,10 @@ export default function Header() {
   return (
     <div style={{
           width: "100%",
-          position: "absolute",
+          position: "fixed",
           left: 0,
           top: 0,
+          zIndex: 20,
     }}>
       <header>
         
