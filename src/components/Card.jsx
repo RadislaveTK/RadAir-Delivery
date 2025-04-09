@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import "../styles/Card.css";
 
-export default function Card() {
+export default function Card({ children, ...props }) {
   const navigate = useNavigate();
 
   return (
-    <button className="card" onClick={() => navigate(-1)}>
-      <img src="/assets/icons/undo.svg" width={25} />
-      Назад
+    <button {...props} className="card" onClick={() => navigate(-1)}> 
+      {children}
     </button>
   );
 }
