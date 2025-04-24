@@ -6,13 +6,14 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Button from "../components/Button";
 import Main from "../components/Main";
+import GeoModal from "../components/GeoModal";
 
 export default function Home() {
   return (
     <>
       <Header />
       <BgDop />
-      
+
       <Main>
         <Search />
         <div className="block">
@@ -36,22 +37,9 @@ export default function Home() {
             </Card>
           </div>
         </div>
-        <Button style={{ padding: "7px 10px" }}>
-          <img src="/assets/icons/location.svg" />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-            }}
-          >
-            <h3 style={{ fontSize: "18px" }}>Мой адрес: Тимирязева 23</h3>
-            <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
-              Изменить местоположение
-            </h4>
-          </div>
-        </Button>
+        
+        <GeoModal />
+
       </Main>
 
       <Fotter />
