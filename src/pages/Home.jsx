@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Search from "../components/Search";
 import Card from "../components/Card";
@@ -37,9 +37,8 @@ export default function Home() {
             </Card>
           </div>
         </div>
-        
-        <GeoModal />
 
+        <GeoModal />
       </Main>
 
       <Fotter />

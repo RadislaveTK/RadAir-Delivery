@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import "../styles/BurgerMenu.css";
+import { GeoContext } from "../stores/GeoContext";
 
 export default function BurgerMenu() {
   const [toggle, setToggle] = useState(false);
   const menuRef = useRef(null);
   const divO = useRef(null);
   const buttonRef = useRef(null);
+  const { address } = useContext(GeoContext);
 
   // Функция переключения состояния
   const toggleMenu = () => {
@@ -63,7 +65,7 @@ export default function BurgerMenu() {
             <Link to="/">
               <img className="menu-img" src="/assets/icons/map.svg" />
               <div className="menu-ad">
-                Текущий адрес <span>Тимирязева 23</span>
+                Текущий адрес <span>{address || "Адрес не определён"}</span>
               </div>
             </Link>
           </li>
