@@ -103,7 +103,7 @@ export default function FormRegister() {
             placeholder="Подтверждение пароля"
             // value={password}
             onChange={(e) => {
-              e.target.value
+              //e.target.value
             }}
             required
             autoComplete="off"

@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Button from "./Button";
 import "../styles/GeoModal.css";
+import { useContext } from "react";
+import { GeoContext } from "../stores/GeoContext";
+
 
 export default function GeoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+
   const [markerCoords, setMarkerCoords] = useState(null);
+  const { setAddress, setCoords } = useContext(GeoContext);
 
   const modalRef = useRef(null);
   const mapRef = useRef(null);
@@ -25,18 +30,6 @@ export default function GeoModal() {
     setIsOpen(false);
     setTimeout(() => setIsVisible(false), 300);
   };
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setMarkerCoords([54.861865, 69.139635]);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setMarkerCoords([pos.coords.latitude, pos.coords.longitude]),
-      () => setMarkerCoords([54.861865, 69.139635])
-    );
-  }, []);
 
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
@@ -65,17 +58,29 @@ export default function GeoModal() {
     }
   };
 
-  useEffect(() => {
-    if (!searchText.trim()) return;
-    const delay = setTimeout(() => fetchGeocodeData(searchText), 700);
-    return () => clearTimeout(delay);
-  }, [searchText]);
-
   const handleSuggestionSelect = (item) => {
     setSearchText(`${item.description}, ${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
   };
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setMarkerCoords([54.861865, 69.139635]);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setMarkerCoords([pos.coords.latitude, pos.coords.longitude]),
+      () => setMarkerCoords([54.861865, 69.139635])
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!searchText.trim()) return;
+    const delay = setTimeout(() => fetchGeocodeData(searchText), 700);
+    return () => clearTimeout(delay);
+  }, [searchText]);
 
   useEffect(() => {
     if (!isOpen || !mapRef.current || !markerCoords) return;
@@ -161,14 +166,31 @@ export default function GeoModal() {
     map.setCenter(markerCoords, 17);
     placemarkRef.current = placemark;
 
-    window.ymaps.geocode(markerCoords).then((res) => {
-      const firstGeoObject = res.geoObjects.get(0);
-      if (firstGeoObject) {
-        const address = firstGeoObject.getAddressLine();
-        console.log("Адрес по координатам:", address);
-      }
-    });
   }, [markerCoords]);
+
+
+
+  useEffect(() => {
+    console.log(markerCoords);
+    window.ymaps.ready(() => {
+      window.ymaps.geocode(markerCoords)
+        .then((res) => {
+          const firstGeoObject = res.geoObjects.get(0);
+          if (firstGeoObject) {
+            const address = firstGeoObject.getAddressLine();
+            console.log("Адрес по координатам:", address);
+          }
+        })
+        .catch((err) => {
+          console.error("Ошибка при геокодировании:", err);
+        });
+    });
+
+
+  }, [markerCoords]);
+
+
+
 
   const handleTouchStart = (e) => {
     touchStartYRef.current = e.touches[0].clientY;
@@ -219,7 +241,11 @@ export default function GeoModal() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
+            <label htmlFor="inp_geo_search">
+              <h2>Введите адресс</h2>
+            </label>
             <input
+              id="inp_geo_search"
               type="text"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
