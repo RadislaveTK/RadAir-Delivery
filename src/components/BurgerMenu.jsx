@@ -8,7 +8,7 @@ export default function BurgerMenu() {
   const menuRef = useRef(null);
   const divO = useRef(null);
   const buttonRef = useRef(null);
-  const { address } = useContext(GeoContext);
+  const {address} = useContext(GeoContext);
 
   // Функция переключения состояния
   const toggleMenu = () => {
@@ -102,7 +102,7 @@ export default function BurgerMenu() {
       </div>
       <div
         ref={divO}
-        style={{display:"none", width: "300vh", height: "300vh", background: "#00000060", position:"absolute", top:"-50px", transition: "display 1s linear" }}
+        style={{ display: "none", width: "300vh", height: "300vh", background: "#00000060", position: "absolute", top: "-50px", transition: "display 1s linear" }}
         onClick={() => {
           toggleMenu();
           divO.current.style.display = "none";

@@ -4,15 +4,16 @@ import "../styles/GeoModal.css";
 import { useContext } from "react";
 import { GeoContext } from "../stores/GeoContext";
 
-
 export default function GeoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-
+  const [shouldFetch, setShouldFetch] = useState(true);
   const [markerCoords, setMarkerCoords] = useState(null);
-  const { setAddress, setCoords } = useContext(GeoContext);
+
+  const {setAddress, address} = useContext(GeoContext);
+
 
   const modalRef = useRef(null);
   const mapRef = useRef(null);
@@ -33,7 +34,10 @@ export default function GeoModal() {
 
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json`;
+
+    const bbox = "69.098888,54.840701~69.235726,54.906668";
+
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
@@ -58,11 +62,25 @@ export default function GeoModal() {
     }
   };
 
+
   const handleSuggestionSelect = (item) => {
+    setShouldFetch(false); // отключаем fetch
     setSearchText(`${item.description}, ${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
+
+    setAddress(`${item.description}, ${item.name}`);
   };
+
+  useEffect(() => {
+    if (!searchText.trim() || !shouldFetch) return;
+
+    const delayDebounce = setTimeout(() => {
+      fetchGeocodeData(searchText);
+    }, 700);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchText, shouldFetch]);
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -75,12 +93,6 @@ export default function GeoModal() {
       () => setMarkerCoords([54.861865, 69.139635])
     );
   }, []);
-
-  useEffect(() => {
-    if (!searchText.trim()) return;
-    const delay = setTimeout(() => fetchGeocodeData(searchText), 700);
-    return () => clearTimeout(delay);
-  }, [searchText]);
 
   useEffect(() => {
     if (!isOpen || !mapRef.current || !markerCoords) return;
@@ -107,6 +119,8 @@ export default function GeoModal() {
           draggable: true,
         }
       );
+      console.log(placemark);
+
 
       placemark.events.add("dragend", () => {
         const coords = placemark.geometry.getCoordinates();
@@ -140,55 +154,25 @@ export default function GeoModal() {
     };
   }, [isOpen, markerCoords]);
 
-  useEffect(() => {
-    if (!markerCoords || !mapInstanceRef.current) return;
-
-    const map = mapInstanceRef.current;
-    map.geoObjects.removeAll();
-
-    const placemark = new window.ymaps.Placemark(
-      markerCoords,
-      {
-        balloonContent: `Вы выбрали точку: ${markerCoords[0].toFixed(5)}, ${markerCoords[1].toFixed(5)}`,
-      },
-      {
-        preset: "islands#blueIcon",
-        draggable: true,
-      }
-    );
-
-    placemark.events.add("dragend", () => {
-      const coords = placemark.geometry.getCoordinates();
-      setMarkerCoords(coords);
-    });
-
-    map.geoObjects.add(placemark);
-    map.setCenter(markerCoords, 17);
-    placemarkRef.current = placemark;
-
-  }, [markerCoords]);
-
 
 
   useEffect(() => {
-    console.log(markerCoords);
     window.ymaps.ready(() => {
       window.ymaps.geocode(markerCoords)
         .then((res) => {
           const firstGeoObject = res.geoObjects.get(0);
           if (firstGeoObject) {
-            const address = firstGeoObject.getAddressLine();
-            console.log("Адрес по координатам:", address);
+            const address = `${firstGeoObject.getThoroughfare()} ${firstGeoObject.getPremiseNumber()}`;
+            
+            
+            setAddress(address);
           }
         })
         .catch((err) => {
           console.error("Ошибка при геокодировании:", err);
         });
     });
-
-
   }, [markerCoords]);
-
 
 
 
@@ -216,6 +200,8 @@ export default function GeoModal() {
     setSwipeDistance(0);
   };
 
+
+
   return (
     <>
       <Button className="geo-btn" onClick={openModal}>
@@ -223,7 +209,7 @@ export default function GeoModal() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <h3 style={{ fontSize: "18px" }}>Мой адрес</h3>
           <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
-            Определить автоматически
+            {address ? address : "Определить автоматически"}
           </h4>
         </div>
       </Button>
@@ -242,13 +228,13 @@ export default function GeoModal() {
             onTouchEnd={handleTouchEnd}
           >
             <label htmlFor="inp_geo_search">
-              <h2>Введите адресс</h2>
+              <h2>Введите адрес</h2>
             </label>
             <input
               id="inp_geo_search"
               type="text"
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => { setSearchText(e.target.value); setShouldFetch(true); }}
             />
             {suggestions.length > 0 && (
               <ul className="geo-suggestions">
