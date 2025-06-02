@@ -104,3 +104,7 @@
   border-radius: 12px;
   overflow: hidden;
 }
+
+.geo-btn {
+  padding: 5px 10px;
+}

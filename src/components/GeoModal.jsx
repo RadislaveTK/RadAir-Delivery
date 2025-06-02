@@ -12,8 +12,7 @@ export default function GeoModal() {
   const [shouldFetch, setShouldFetch] = useState(true);
   const [markerCoords, setMarkerCoords] = useState(null);
 
-  const {setAddress, address} = useContext(GeoContext);
-
+  const { setAddress, address } = useContext(GeoContext);
 
   const modalRef = useRef(null);
   const mapRef = useRef(null);
@@ -37,7 +36,9 @@ export default function GeoModal() {
 
     const bbox = "69.098888,54.840701~69.235726,54.906668";
 
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(
+      query
+    )}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
@@ -61,7 +62,6 @@ export default function GeoModal() {
       console.error("Ошибка при запросе:", error);
     }
   };
-
 
   const handleSuggestionSelect = (item) => {
     setShouldFetch(false); // отключаем fetch
@@ -121,7 +121,6 @@ export default function GeoModal() {
       );
       console.log(placemark);
 
-
       placemark.events.add("dragend", () => {
         const coords = placemark.geometry.getCoordinates();
         setMarkerCoords(coords);
@@ -154,29 +153,35 @@ export default function GeoModal() {
     };
   }, [isOpen, markerCoords]);
 
-
-
   useEffect(() => {
     window.ymaps.ready(() => {
-      window.ymaps.geocode(markerCoords)
+      window.ymaps
+        .geocode(markerCoords)
         .then((res) => {
           const firstGeoObject = res.geoObjects.get(0);
           if (firstGeoObject) {
-            const address = `${firstGeoObject.getThoroughfare()} ${firstGeoObject.getPremiseNumber()}`;
-            
-            
+            const address = `${firstGeoObject.getThoroughfare()} ${
+              firstGeoObject.getPremiseNumber()
+                ? firstGeoObject.getPremiseNumber()
+                : ""
+            }`;
+
             setAddress(address);
           }
         })
         .catch((err) => {
           console.error("Ошибка при геокодировании:", err);
         });
+
+      document.getElementsByClassName("ymaps-2-1-79-copyrights-pane")[0].remove();
     });
   }, [markerCoords]);
 
-
-
   const handleTouchStart = (e) => {
+    if (mapRef.current && mapRef.current.contains(e.target)) {
+      touchStartYRef.current = null; // игнорировать свайп
+      return;
+    }
     touchStartYRef.current = e.touches[0].clientY;
   };
 
@@ -200,13 +205,17 @@ export default function GeoModal() {
     setSwipeDistance(0);
   };
 
-
-
   return (
     <>
       <Button className="geo-btn" onClick={openModal}>
         <img src="/assets/icons/location.svg" alt="location" />
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
           <h3 style={{ fontSize: "18px" }}>Мой адрес</h3>
           <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
             {address ? address : "Определить автоматически"}
@@ -234,7 +243,10 @@ export default function GeoModal() {
               id="inp_geo_search"
               type="text"
               value={searchText}
-              onChange={(e) => { setSearchText(e.target.value); setShouldFetch(true); }}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+                setShouldFetch(true);
+              }}
             />
             {suggestions.length > 0 && (
               <ul className="geo-suggestions">
