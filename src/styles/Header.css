@@ -1,7 +1,7 @@
 header {
   padding: 5px;
   background-color: #963736;
-  background-image: url("/public/assets/back.png");
+  /* background-image: url("/public/assets/back.png"); */
   background-origin: border-box;
   background-position: center;
   background-size: cover;

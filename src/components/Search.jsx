@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function Search() {
-  const [value, setValue] = useState();
+  const [value, setValue] = useState("");
 
   const handleSearch = (e) => {
     setValue(e.target.value);

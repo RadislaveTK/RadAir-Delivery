@@ -5,6 +5,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import './index.css';
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/search" element={<Search />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
