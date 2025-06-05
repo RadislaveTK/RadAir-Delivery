@@ -4,6 +4,7 @@ import "../styles/GeoModal.css";
 import { GeoContext } from "../stores/GeoContext";
 import Cookies from "js-cookie";
 
+
 export default function GeoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -59,29 +60,51 @@ export default function GeoModal() {
       if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
       const data = await response.json();
       const items = data.response.GeoObjectCollection.featureMember;
+      console.log(data);
+      
 
+      // Обработка предложений
       const results = items.map((item) => {
+        
         const geo = item.GeoObject;
         const coords = geo.Point.pos.split(" ").map(Number).reverse();
+
+        // Получаем компоненты адреса
+        const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
+        // console.log('Components:', components);  // Выводим все компоненты для проверки
+
+        let city = components.find((comp) => comp.kind === "locality")?.name || '';
+        let street = components.find((comp) => comp.kind === "street")?.name || '';
+        let house = components.find((comp) => comp.kind === "house")?.name || '';
+
+        // Формируем строку адреса
+        const formattedAddress = `${city}, ${street} ${house}`.trim();
+        // console.log('Formatted Address:', formattedAddress);  // Выводим сформированный адрес
+
         return {
           name: geo.name,
           description: geo.description,
           coords,
+          formattedAddress, // Добавляем форматированный адрес
         };
       });
 
-      setSuggestions(results);
+      // Убедимся, что результаты правильно передаются
+      setSuggestions(results); // Обновляем состояние
     } catch (error) {
       console.error("Ошибка при запросе:", error);
     }
   };
 
+
+
+
   const handleSuggestionSelect = (item) => {
     setShouldFetch(false);
-    setSearchText(`${item.description}, ${item.name}`);
+    setSearchText(`${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
-    setAddress(`${item.description}, ${item.name}`);
+    setAddress(`${item.formattedAddress}`);
   };
 
   // Подсказки
@@ -94,7 +117,7 @@ export default function GeoModal() {
   // Геолокация браузера
   useEffect(() => {
     if (!navigator.geolocation || Cookies.get("cords")) return;
-  
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = [pos.coords.latitude, pos.coords.longitude];
@@ -105,8 +128,16 @@ export default function GeoModal() {
       }
     );
   }, [markerCoords]);
-  
-  
+
+  useEffect(() => {
+    if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords) return;
+
+    mapInstanceRef.current.setCenter(markerCoords);
+    placemarkRef.current.geometry.setCoordinates(markerCoords);
+  }, [markerCoords]);
+
+
+
 
   // Инициализация карты
   useEffect(() => {
@@ -133,7 +164,7 @@ export default function GeoModal() {
       });
 
       map.geoObjects.add(placemark);
-      map.events.add("click", (e) => setMarkerCoords(e.get("coords")));
+      // map.events.add("click", (e) => setMarkerCoords(e.get("coords")));
 
       mapInstanceRef.current = map;
       placemarkRef.current = placemark;
@@ -176,7 +207,7 @@ export default function GeoModal() {
           const house = firstGeoObject.getPremiseNumber() || "";
           const fullAddress = `${street} ${house}`.trim();
           setAddress(fullAddress);
-          Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7,sameSite: "Lax",  });
+          Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax", });
         }
       });
     });
@@ -233,27 +264,47 @@ export default function GeoModal() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <label htmlFor="inp_geo_search"><h2>Введите адрес</h2></label>
+            {/* <label htmlFor="inp_geo_search"><h2>Введите адрес</h2></label> */}
             <input
               id="inp_geo_search"
               type="text"
+              placeholder="Поиск"
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
                 setShouldFetch(true);
               }}
+              onKeyDown={(e) => {
+                if (e.code == "Enter") {
+                  console.log(e);
+                  setSearchText(e.target.value);
+                  setShouldFetch(true);
+                }
+              }}
             />
             {suggestions.length > 0 && (
               <ul className="geo-suggestions">
-                {suggestions.map((item, index) => (
-                  <li key={index} onClick={() => handleSuggestionSelect(item)}>
-                    {item.description}, {item.name}
-                  </li>
-                ))}
+                {suggestions.map((item, index) => {
+                  return (
+                    <li key={index} onClick={() => handleSuggestionSelect(item)}>
+                      {item.formattedAddress}
+                    </li>
+                  );
+                })}
               </ul>
             )}
-            <h3>Мое местоположение</h3>
+            {/* <h3>Мое местоположение</h3> */}
             <div className="map-container" ref={mapRef} />
+
+            <Button className="geo-btn-two" onClick={closeModal}>
+              <img src="/assets/icons/location.svg" alt="location" width={34} />
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "5px" }}>
+                <h3 style={{ fontSize: "15px" }}>Мой адрес: {address ? address : "Определить автоматически"}</h3>
+                <h4 style={{ fontSize: "13px", color: "#D4C0B1" }}>
+                  Изменить местоположение
+                </h4>
+              </div>
+            </Button>
           </div>
         </div>
       )}

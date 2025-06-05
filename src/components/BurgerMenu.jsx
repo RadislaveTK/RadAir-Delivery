@@ -57,13 +57,13 @@ export default function BurgerMenu() {
         <ul>
           <li>
             <Link to="/login">
-              <img className="menu-img" src="/assets/icons/profile.svg" />
+              <img className="menu-img" src="/assets/icons/profile.svg" alt="img"/>
               Вход
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/map.svg" />
+              <img className="menu-img" src="/assets/icons/map.svg" alt="img"/>
               <div className="menu-ad">
                 Текущий адрес <span>{address || "Адрес не определён"}</span>
               </div>
@@ -71,31 +71,31 @@ export default function BurgerMenu() {
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/list.svg" />
+              <img className="menu-img" src="/assets/icons/list.svg" alt="img"/>
               Мои заказы
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/basket.svg" />
+              <img className="menu-img" src="/assets/icons/basket.svg" alt="img"/>
               Моя корзина
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/work.svg" />
+              <img className="menu-img" src="/assets/icons/work.svg" alt="img"/>
               Работа курьера
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/settings.svg" />
+              <img className="menu-img" src="/assets/icons/settings.svg" alt="img"/>
               Настройки
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/help.svg" />О нас
+              <img className="menu-img" src="/assets/icons/help.svg" alt="img"/>О нас
             </Link>
           </li>
         </ul>

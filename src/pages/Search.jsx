@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+// import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Search from "../components/Search";
 import BgDop from "../components/BgDop";
@@ -15,7 +15,7 @@ export default function Auth() {
       <Search />
       <div className="block">
         <h1 className="heading">Заказать</h1>
-        
+
         
       </div>
 

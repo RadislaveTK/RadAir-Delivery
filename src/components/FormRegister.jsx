@@ -94,7 +94,7 @@ export default function FormRegister() {
         </div>
         <div className="auth-input-div">
           <label htmlFor="inp_password">
-            <img src="/assets/icons/lock.svg" alt="lock" />
+            <img src="/assets/icons/lock.svg" alt="lock" alt="Icon"/>
           </label>
           <input
             id="inp_password"

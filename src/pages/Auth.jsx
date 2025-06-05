@@ -5,7 +5,7 @@ export default function Auth() {
   return (
     <main className="auth">
       <div className="auth-block">
-        <img src="/assets/Icon.png" style={{ width: "120px" }} />
+        <img src="/assets/Icon.png" style={{ width: "120px" }} alt="Icon"/>
         <h1
           style={{
             color: "#963736",

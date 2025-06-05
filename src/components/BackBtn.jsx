@@ -24,7 +24,7 @@ export default function BackBtn() {
 
   return (
     <button className="back-btn" style={style} onClick={() => navigate(-1)}>
-      <img src="/assets/icons/undo.svg" width={25} />
+      <img src="/assets/icons/undo.svg" width={25} alt="img"/>
       Назад
     </button>
   );

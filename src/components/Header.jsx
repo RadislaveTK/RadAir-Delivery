@@ -16,7 +16,7 @@ export default function Header() {
       <header>
         
         <Link className="logo" to="/">
-          <img width={155} height={70} src="/assets/name.png" />
+          <img width={155} height={70} src="/assets/name.png" alt="Icon"/>
         </Link>
       </header>
       <BurgerMenu />
