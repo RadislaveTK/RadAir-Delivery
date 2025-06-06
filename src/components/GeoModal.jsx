@@ -60,8 +60,6 @@ export default function GeoModal() {
       if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
       const data = await response.json();
       const items = data.response.GeoObjectCollection.featureMember;
-      console.log(data);
-      
 
       // Обработка предложений
       const results = items.map((item) => {
@@ -71,7 +69,6 @@ export default function GeoModal() {
 
         // Получаем компоненты адреса
         const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
-        // console.log('Components:', components);  // Выводим все компоненты для проверки
 
         let city = components.find((comp) => comp.kind === "locality")?.name || '';
         let street = components.find((comp) => comp.kind === "street")?.name || '';
@@ -79,7 +76,6 @@ export default function GeoModal() {
 
         // Формируем строку адреса
         const formattedAddress = `${city}, ${street} ${house}`.trim();
-        // console.log('Formatted Address:', formattedAddress);  // Выводим сформированный адрес
 
         return {
           name: geo.name,
@@ -89,7 +85,6 @@ export default function GeoModal() {
         };
       });
 
-      // Убедимся, что результаты правильно передаются
       setSuggestions(results); // Обновляем состояние
     } catch (error) {
       console.error("Ошибка при запросе:", error);
