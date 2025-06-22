@@ -10,6 +10,11 @@ export default function BurgerMenu() {
   const buttonRef = useRef(null);
   const {address} = useContext(GeoContext);
 
+  // useEffect(()=>{
+  //   console.log(address);
+    
+  // }, []);
+
   // Функция переключения состояния
   const toggleMenu = () => {
     if (toggle) {
@@ -65,7 +70,7 @@ export default function BurgerMenu() {
             <Link to="/">
               <img className="menu-img" src="/assets/icons/map.svg" alt="img"/>
               <div className="menu-ad">
-                Текущий адрес <span>{address || "Адрес не определён"}</span>
+                Текущий адрес <span>{address ? address : "Определение адреса..."}</span>
               </div>
             </Link>
           </li>

@@ -1,28 +1,90 @@
-// import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Search from "../components/Search";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
-import { GeoContext } from "../stores/GeoContext";
+import CardProduct from "../components/CardProduct";
 
-export default function Auth() {
+export default function SearchP() {
+  const [value, setValue] = useState("");
+  const [products, setProducts] = useState([]);
+  const [debouncedValue, setDebouncedValue] = useState("");
+
+  // 👇 Отложенное обновление debouncedValue
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, 700); // задержка 500 мс
+
+    return () => clearTimeout(timer); // очистка при следующем вводе
+  }, [value]);
+
+  // 👇 Запрос срабатывает только когда debouncedValue изменяется
+  useEffect(() => {
+    if (debouncedValue.trim() === "") return;
+
+    fetch(
+      `https://radair.local/api/product/search?name=${encodeURIComponent(
+        debouncedValue
+      )}`
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Ошибка при получении данных");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Результаты поиска:", data);
+        setProducts(data); // если нужно отрисовать
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      });
+  }, [debouncedValue]);
+
   return (
     <>
-    <Header />
-    <BgDop />
+      <Header />
+      <BgDop />
 
-    <Main>
-      <Search />
-      <div className="block">
-        <h1 className="heading">Заказать</h1>
+      <Main>
+        <div className="search">
+          <label htmlFor="inp_search">
+            <img src="/assets/icons/search.svg" alt="search" />
+          </label>
+          <input
+            id="inp_search"
+            className="inp"
+            type="search"
+            placeholder="Поиск"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+        </div>
 
-        
-      </div>
+        <div className="block">
+          <h1
+            style={{ fontFamily: "Nunito", fontWeight: "bold" }}
+            className="heading"
+          >
+            Результат поиска
+          </h1>
 
-    </Main>
+          {/* Пример отрисовки результатов */}
+          <ul>
+            {products.map((p) => (
+              <CardProduct key={p.id}>
+              <img src={`assets/products/${p.img}`} alt="Icon"/>
+              {p.name}
+              </CardProduct>
+            ))}
+          </ul>
+        </div>
+      </Main>
 
-    <Fotter />
-  </>
+      <Fotter />
+    </>
   );
 }

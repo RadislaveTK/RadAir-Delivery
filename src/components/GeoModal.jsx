@@ -23,6 +23,10 @@ export default function GeoModal() {
   const touchStartYRef = useRef(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
 
+  //  useEffect(()=>{
+  //   setAddress()
+  //  },[markerCoords]);
+
   // Получение координат из cookie
   useEffect(() => {
     const cord = Cookies.get("cords");
@@ -91,15 +95,14 @@ export default function GeoModal() {
     }
   };
 
-
-
-
   const handleSuggestionSelect = (item) => {
     setShouldFetch(false);
     setSearchText(`${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
-    setAddress(`${item.formattedAddress}`);
+    setAddress(`${item.name}`);    
+    console.log(`dsada  ${item.name}`);
+    
   };
 
   // Подсказки
@@ -130,9 +133,6 @@ export default function GeoModal() {
     mapInstanceRef.current.setCenter(markerCoords);
     placemarkRef.current.geometry.setCoordinates(markerCoords);
   }, [markerCoords]);
-
-
-
 
   // Инициализация карты
   useEffect(() => {
