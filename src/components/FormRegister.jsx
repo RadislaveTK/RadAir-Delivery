@@ -1,30 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "./Button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../stores/AuthContext";
 
 export default function FormRegister() {
   const [phone, setPhone] = useState("+7");
-  const [name, setName] = useState("");
+  const [name, setName] = useState("No name");
   const [password, setPassword] = useState("");
   const [passwordV, setPasswordV] = useState("");
-  // const [req, setReq] = useState("");
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const { setUser, fetchUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
+      
+      fetch("https://radair.local/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // обязательно, если используешь sanctum
+        body: JSON.stringify({
+          name: name,
+          phone: phone,
+          password: password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // console.log("Успех:", data);
+          // Здесь можешь редиректить или сохранить пользователя
+          fetchUser(); // загрузим текущего пользователя
+          navigate("/dashboard"); // редирект после регистрации
+        })
+        .catch((err) => {
+          console.error("Ошибка:", err);
+        });
       console.log("Форма отправлена!");
     }
   };
 
-
   useEffect(() => {
     if (password != passwordV) {
       setError("Пароли не совпадают");
-    }
-  }, [password, passwordV]);
+    } else if (name.length <= 1 || /^[A-Za-zА-Яа-я\s]*$/.test(name) == false) {
+      setError("Введите корректное имя и фамилию");
+    } else setError(false);
+  }, [password, passwordV, name]);
 
   const handlePhoneChange = (e) => {
     let value = e.target.value.replace(/[^0-9+]/g, ""); // Оставляем только цифры и "+"
@@ -67,14 +93,14 @@ export default function FormRegister() {
         {/* Поле ввода телефона */}
         <div className="auth-input-div">
           <label htmlFor="inp_name">
-            <img src="/assets/icons/call.svg" alt="name" />
+            <img src="/assets/icons/badge.svg" alt="name" />
           </label>
           <input
             id="inp_name"
             type="text"
             inputMode="text"
             placeholder="Имя Фамилия"
-            value={name}
+            required
             onChange={(e) => {
               setName(e.target.value);
               setError(
