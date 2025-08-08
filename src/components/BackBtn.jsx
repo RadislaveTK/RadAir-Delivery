@@ -1,9 +1,9 @@
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function BackBtn() {
-    const navigate = useNavigate();
-  
-    const style = {
+  const navigate = useNavigate();
+
+  const style = {
     position: "absolute",
     display: "flex",
     alignItems: "center",
@@ -17,14 +17,15 @@ export default function BackBtn() {
     color: "#fff",
     fontSize: "20px",
     padding: "0 10px",
-    top: "15%",
+    // top: "15%",
     left: "5%",
     cursor: "pointer",
+    zIndex: 14,
   };
 
   return (
     <button className="back-btn" style={style} onClick={() => navigate(-1)}>
-      <img src="/assets/icons/undo.svg" width={25} alt="img"/>
+      <img src="/assets/icons/undo.svg" width={25} alt="img" />
       Назад
     </button>
   );

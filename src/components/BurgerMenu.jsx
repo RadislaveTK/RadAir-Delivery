@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import "../styles/BurgerMenu.css";
 import { GeoContext } from "../stores/GeoContext";
+import { useAuth } from "../stores/AuthContext";
 
 export default function BurgerMenu() {
   const [toggle, setToggle] = useState(false);
   const menuRef = useRef(null);
   const divO = useRef(null);
   const buttonRef = useRef(null);
-  const {address} = useContext(GeoContext);
+  const { address } = useContext(GeoContext);
+  const { user, fetchUser } = useAuth();
 
   // useEffect(()=>{
   //   console.log(address);
-    
+
   // }, []);
 
   // Функция переключения состояния
@@ -61,53 +63,98 @@ export default function BurgerMenu() {
       <div ref={menuRef} className={`menu ${toggle ? "open" : ""}`}>
         <ul>
           <li>
+            {!user ? (
             <Link to="/login">
-              <img className="menu-img" src="/assets/icons/profile.svg" alt="img"/>
+              <img
+                className="menu-img"
+                src="/assets/icons/profile.svg"
+                alt="img"
+              />
               Вход
             </Link>
+            ) : (
+              <Link to="/profile">
+              <img
+                className="menu-img"
+                src="/assets/icons/profile.svg"
+                alt="img"
+              />
+              Профиль
+            </Link>
+            ) }
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/map.svg" alt="img"/>
+              <img className="menu-img" src="/assets/icons/map.svg" alt="img" />
               <div className="menu-ad">
-                Текущий адрес <span>{address ? address : "Определение адреса..."}</span>
+                Текущий адрес{" "}
+                <span>{address ? address : "Определение адреса..."}</span>
               </div>
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/list.svg" alt="img"/>
+              <img
+                className="menu-img"
+                src="/assets/icons/list.svg"
+                alt="img"
+              />
               Мои заказы
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/basket.svg" alt="img"/>
+              <img
+                className="menu-img"
+                src="/assets/icons/basket.svg"
+                alt="img"
+              />
               Моя корзина
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/work.svg" alt="img"/>
+              <img
+                className="menu-img"
+                src="/assets/icons/work.svg"
+                alt="img"
+              />
               Работа курьера
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/settings.svg" alt="img"/>
+              <img
+                className="menu-img"
+                src="/assets/icons/settings.svg"
+                alt="img"
+              />
               Настройки
             </Link>
           </li>
           <li>
             <Link to="/">
-              <img className="menu-img" src="/assets/icons/help.svg" alt="img"/>О нас
+              <img
+                className="menu-img"
+                src="/assets/icons/help.svg"
+                alt="img"
+              />
+              О нас
             </Link>
           </li>
         </ul>
       </div>
       <div
         ref={divO}
-        style={{ display: "none", width: "300vh", height: "300vh", background: "#00000060", position: "absolute", top: "-50px", transition: "display 1s linear" }}
+        style={{
+          display: "none",
+          width: "300vh",
+          height: "300vh",
+          background: "#00000060",
+          position: "absolute",
+          top: "-50px",
+          transition: "display 1s linear",
+        }}
         onClick={() => {
           toggleMenu();
           divO.current.style.display = "none";

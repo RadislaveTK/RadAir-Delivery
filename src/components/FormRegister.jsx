@@ -17,8 +17,7 @@ export default function FormRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      
-      fetch("https://radair.local/api/register", {
+      fetch("http://127.0.0.1:8000/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,10 +31,9 @@ export default function FormRegister() {
       })
         .then((res) => res.json())
         .then((data) => {
-          // console.log("Успех:", data);
-          // Здесь можешь редиректить или сохранить пользователя
-          fetchUser(); // загрузим текущего пользователя
-          navigate("/dashboard"); // редирект после регистрации
+          console.log("Успех:", data);
+          // fetchUser(); // загрузим текущего пользователя
+          // navigate("/dashboard"); // редирект после регистрации
         })
         .catch((err) => {
           console.error("Ошибка:", err);
@@ -107,7 +105,6 @@ export default function FormRegister() {
                 name.length > 1 ? "" : "Введите корректное имя и фамилию"
               );
             }}
-            required
           />
         </div>
 

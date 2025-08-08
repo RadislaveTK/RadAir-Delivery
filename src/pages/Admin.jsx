@@ -1,10 +1,7 @@
 import Header from "../components/Header";
-import Search from "../components/Search";
-import Card from "../components/Card";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
-import GeoModal from "../components/GeoModal";
 
 export default function Admin() {
   return (

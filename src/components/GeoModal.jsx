@@ -101,7 +101,7 @@ export default function GeoModal() {
     setSuggestions([]);
     setMarkerCoords(item.coords);
     setAddress(`${item.name}`);    
-    console.log(`dsada  ${item.name}`);
+    console.log(`${item.name}`);
     
   };
 

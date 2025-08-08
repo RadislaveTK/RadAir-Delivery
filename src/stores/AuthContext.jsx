@@ -1,4 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+
+const host = "http://127.0.0.1:8000";
 
 const AuthContext = createContext();
 
@@ -8,14 +11,22 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       // Шаг 1: Получить CSRF cookie
-      await fetch("https://radair.local/sanctum/csrf-cookie", {
-        credentials: "include",
-      });
+      // await fetch(`${host}/sanctum/csrf-cookie`, {
+      //   credentials: "include",
+      // });
+      if (!Cookies.get('token')) {
+        console.warn("Не авторизован");
+        setUser(false);
+        return;
+      }
 
       // Шаг 2: Запрос текущего пользователя
-      const res = await fetch("https://radair.local/api/user", {
+      const res = await fetch(`${host}/api/user`, {
         method: "GET",
         credentials: "include",
+        headers: {
+          "Authorization": "Bearer 2|CebbAEUHOCEMCYM3834DbnvfAs9BlId6DWoBKx8Jd7453464",
+        }
       });
 
       if (!res.ok) {
@@ -26,6 +37,8 @@ export const AuthProvider = ({ children }) => {
 
       const data = await res.json();
       setUser(data);
+      console.log(data);
+      
     } catch (err) {
       console.error("Ошибка при получении пользователя:", err);
       setUser(false);

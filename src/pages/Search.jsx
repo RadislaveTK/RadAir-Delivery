@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
-import Search from "../components/Search";
+// import Search from "../components/Search";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
@@ -25,7 +25,7 @@ export default function SearchP() {
     if (debouncedValue.trim() === "") return;
 
     fetch(
-      `https://radair.local/api/product/search?name=${encodeURIComponent(
+      `http://127.0.0.1:8000/api/product/search?name=${encodeURIComponent(
         debouncedValue
       )}`
     )
@@ -76,8 +76,8 @@ export default function SearchP() {
           <ul>
             {products.map((p) => (
               <CardProduct key={p.id}>
-              <img src={`assets/products/${p.img}`} alt="Icon"/>
-              {p.name}
+                <img src={`assets/products/${p.img}`} alt="Icon" />
+                {p.name}
               </CardProduct>
             ))}
           </ul>

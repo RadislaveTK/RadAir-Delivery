@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "./Button";
+import Cookies from "js-cookie";
 
 export default function FormLogin() {
   const [phone, setPhone] = useState("+7");
@@ -8,6 +9,7 @@ export default function FormLogin() {
   const [req, setReq] = useState("");
   const [error, setError] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handlePhoneChange = (e) => {
     e.preventDefault();
@@ -26,12 +28,38 @@ export default function FormLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
+      fetch("http://127.0.0.1:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // обязательно, если используешь sanctum
+        body: JSON.stringify({
+          phone: phone,
+          password: password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Успех:", data);
+          if (data.status === "error" && data.response_code === 401)
+            setError("Неверные данные");
+          if (data.status === "success" && data.response_code === 200) {
+            Cookies.set("token", data.token);
+            navigate("/"); // редирект после регистрации
+          }
+          // setUser
+          // fetchUser(); // загрузим текущего пользователя
+        })
+        .catch((err) => {
+          console.error("Ошибка:", err);
+        });
       console.log("Форма отправлена!");
     }
   };
 
   return (
-    <form style={{width:"100%"}} onSubmit={handleSubmit}>
+    <form style={{ width: "100%" }} onSubmit={handleSubmit}>
       <div
         style={{
           display: "flex",
@@ -67,7 +95,10 @@ export default function FormLogin() {
             type="text" // Изменение типа инпута
             placeholder="Пароль"
             // value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setError(false);
+              setPassword(e.target.value);
+            }}
             required
             autoComplete="off"
           />
@@ -80,14 +111,23 @@ export default function FormLogin() {
               right: "10px",
               top: "50%",
               transform: "translateY(-50%)",
-              width:"22px",
-              height:"22px",
+              width: "22px",
+              height: "22px",
               background: "none",
               border: "none",
               cursor: "pointer",
             }}
           >
-            <img width={"22px"} height={"22px"} src={showPassword ? "/assets/icons/eye-off.svg" : "/assets/icons/eye.svg"} alt="toggle password" />
+            <img
+              width={"22px"}
+              height={"22px"}
+              src={
+                showPassword
+                  ? "/assets/icons/eye-off.svg"
+                  : "/assets/icons/eye.svg"
+              }
+              alt="toggle password"
+            />
           </button>
         </div>
 
@@ -118,7 +158,10 @@ export default function FormLogin() {
         </div>
 
         <p style={{ color: "#963736", fontWeight: "bold" }}>
-          Нет аккаунта? <Link style={{color:"#FF9800"}} to="/register">Зарегестрироваться</Link>
+          Нет аккаунта?{" "}
+          <Link style={{ color: "#FF9800" }} to="/register">
+            Зарегестрироваться
+          </Link>
         </p>
 
         {/* Кнопка отправки */}
