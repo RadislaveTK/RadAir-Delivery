@@ -17,7 +17,7 @@ export default function FormRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch("http://127.0.0.1:8000/api/register", {
+      fetch("https://radair-delivery-back-production-c6d8.up.railway.app/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -25,7 +25,7 @@ export default function SearchP() {
     if (debouncedValue.trim() === "") return;
 
     fetch(
-      `http://127.0.0.1:8000/api/product/search?name=${encodeURIComponent(
+      `https://radair-delivery-back-production-c6d8.up.railway.app/api/product/search?name=${encodeURIComponent(
         debouncedValue
       )}`
     )
