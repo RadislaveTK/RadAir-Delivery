@@ -1,4 +1,4 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -6,14 +6,41 @@ import Main from "../components/Main";
 import Button from "../components/Button";
 import BackBtn from "../components/BackBtn";
 import { useAuth } from "../stores/AuthContext";
+// import Cookies from "js-cookie";
 
 export default function NotFound() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const logout = (e) => {
+  const logout = async (e) => {
     e.preventDefault();
 
-    
+    await fetch("https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie", {
+      credentials: "include",
+    });
+
+    fetch(
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/user",
+      {
+        method: "GET",
+        credentials: "include", // обязательно, если используешь sanctum
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "error" && data.response_code === 401)
+          console.log("Error");
+
+        if (data.status === "success" && data.response_code === 200) {
+          // Cookies.remove("token");
+          // setUser(false);
+          console.log(data);
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      });
 
     console.log("Выход..");
   };
@@ -40,7 +67,12 @@ export default function NotFound() {
             <p>Рейтинг</p>
           </div>
         </div>
-        <Button style={{ padding:"10px 15px", fontSize:"15px" }} onClick={logout}>Выйти из аккаунта</Button>
+        <Button
+          style={{ padding: "10px 15px", fontSize: "15px" }}
+          onClick={logout}
+        >
+          Выйти из аккаунта
+        </Button>
       </Main>
 
       <Fotter />
