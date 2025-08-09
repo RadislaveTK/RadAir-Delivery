@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
-const host = "https://radair-delivery-back-production-c6d8.up.railway.app";
+const host = "https://radair-delivery-back-production-21b4.up.railway.app";
 
 const AuthContext = createContext();
 

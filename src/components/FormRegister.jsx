@@ -17,7 +17,7 @@ export default function FormRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch("https://radair-delivery-back-production-c6d8.up.railway.app/api/register", {
+      fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
