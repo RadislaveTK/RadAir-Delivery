@@ -45,9 +45,9 @@ export default function NotFound() {
       .catch((err) => {
         console.error("Ошибка:", err);
       });
-       Cookies.remove("token");
-          setUser(false);
-          navigate("/");
+    Cookies.remove("token");
+    setUser(false);
+    navigate("/");
     console.log("Выход..");
   };
 
