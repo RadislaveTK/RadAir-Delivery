@@ -6,10 +6,10 @@ import Main from "../components/Main";
 import Button from "../components/Button";
 import BackBtn from "../components/BackBtn";
 import { useAuth } from "../stores/AuthContext";
-// import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 
 export default function NotFound() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
   const logout = async (e) => {
@@ -45,7 +45,9 @@ export default function NotFound() {
       .catch((err) => {
         console.error("Ошибка:", err);
       });
-
+       Cookies.remove("token");
+          setUser(false);
+          navigate("/");
     console.log("Выход..");
   };
 
