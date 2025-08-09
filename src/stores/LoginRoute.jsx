@@ -10,7 +10,7 @@ const LoginRoute = ({ element }) => {
     return <div>Загрузка...</div>;
   }
 
-  if (user === true) {
+  if (user) {
     // Авторизован
     return <Navigate to="/" replace />;
   }
