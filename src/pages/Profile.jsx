@@ -15,15 +15,19 @@ export default function NotFound() {
   const logout = async (e) => {
     e.preventDefault();
 
-    await fetch("https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie", {
-      credentials: "include",
-    });
+    await fetch(
+      "https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie",
+      {
+        credentials: "include",
+      }
+    );
 
     fetch(
       "https://radair-delivery-back-production-21b4.up.railway.app/api/user",
       {
-        method: "GET",
-        credentials: "include", // обязательно, если используешь sanctum
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
       }
     )
       .then((res) => res.json())
