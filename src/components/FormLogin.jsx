@@ -37,6 +37,7 @@ export default function FormLogin() {
         body: JSON.stringify({
           phone: phone,
           password: password,
+          req: req,
         }),
       })
         .then((res) => res.json())
