@@ -183,7 +183,7 @@ export default function GeoModal() {
         mapInstanceRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [isOpen, markerCoords]);
 
   // Геокодирование координат
   useEffect(() => {
@@ -206,7 +206,7 @@ export default function GeoModal() {
         }
       });
     });
-  }, [markerCoords]);
+  }, [markerCoords, setAddress]);
 
   // Свайп вниз для закрытия
   const handleTouchStart = (e) => {
@@ -270,7 +270,7 @@ export default function GeoModal() {
                 setShouldFetch(true);
               }}
               onKeyDown={(e) => {
-                if (e.code == "Enter") {
+                if (e.code === "Enter") {
                   console.log(e);
                   setSearchText(e.target.value);
                   setShouldFetch(true);

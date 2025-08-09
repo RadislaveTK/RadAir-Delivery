@@ -10,7 +10,7 @@ export default function BurgerMenu() {
   const divO = useRef(null);
   const buttonRef = useRef(null);
   const { address } = useContext(GeoContext);
-  const { user, fetchUser } = useAuth();
+  const { user } = useAuth();
 
   // useEffect(()=>{
   //   console.log(address);
