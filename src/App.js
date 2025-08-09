@@ -9,14 +9,15 @@ import Search from "./pages/Search";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./stores/PrivateRoute";
+import LoginRoute from "./stores/LoginRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Auth />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" lement={<LoginRoute element={<Auth />} />}  />
+        <Route path="/register" lement={<LoginRoute element={<Register />} />}  />
         <Route path="/search" element={<PrivateRoute element={<Search />} />} />
         <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
         <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
