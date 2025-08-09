@@ -23,7 +23,7 @@ export default function NotFound() {
     );
 
     fetch(
-      "https://radair-delivery-back-production-21b4.up.railway.app/api/user",
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/logout",
       {
         method: "POST",
         credentials: "include",
