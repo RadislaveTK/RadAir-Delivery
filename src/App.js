@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import './index.css';
+
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
-import './index.css';
 import Search from "./pages/Search";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
@@ -16,8 +17,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" lement={<LoginRoute element={<Auth />} />}  />
-        <Route path="/register" lement={<LoginRoute element={<Register />} />}  />
+        <Route path="/login" element={<LoginRoute element={<Auth />} />}  />
+        <Route path="/register" element={<LoginRoute element={<Register />} />}  />
         <Route path="/search" element={<PrivateRoute element={<Search />} />} />
         <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
         <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
