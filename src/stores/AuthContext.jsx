@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
       // await fetch(`${host}/sanctum/csrf-cookie`, {
       //   credentials: "include",
       // });
-      if (!Cookies.get('token')) {
+      let token = Cookies.get('token');
+      if (!token) {
         console.warn("Не авторизован");
         setUser(false);
         return;
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
         method: "GET",
         credentials: "include",
         headers: {
-          "Authorization": "Bearer 2|CebbAEUHOCEMCYM3834DbnvfAs9BlId6DWoBKx8Jd7453464",
+          "Authorization": `Bearer ${token}`,
         }
       });
 
