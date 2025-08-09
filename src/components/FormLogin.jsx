@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "./Button";
 import Cookies from "js-cookie";
+import { useAuth } from "../stores/AuthContext";
 
 export default function FormLogin() {
   const [phone, setPhone] = useState("+7");
@@ -9,6 +10,7 @@ export default function FormLogin() {
   const [req, setReq] = useState("");
   const [error, setError] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const handlePhoneChange = (e) => {
@@ -28,18 +30,21 @@ export default function FormLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // обязательно, если используешь sanctum
-        body: JSON.stringify({
-          phone: phone,
-          password: password,
-          req: req,
-        }),
-      })
+      fetch(
+        "https://radair-delivery-back-production-21b4.up.railway.app/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // обязательно, если используешь sanctum
+          body: JSON.stringify({
+            phone: phone,
+            password: password,
+            req: req,
+          }),
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           console.log("Успех:", data);
@@ -47,6 +52,7 @@ export default function FormLogin() {
             setError("Неверные данные");
           if (data.status === "success" && data.response_code === 200) {
             Cookies.set("token", data.token);
+            setUser(data.user);
             navigate("/"); // редирект после регистрации
           }
           // setUser

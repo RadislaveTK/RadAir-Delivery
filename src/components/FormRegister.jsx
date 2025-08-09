@@ -11,7 +11,6 @@ export default function FormRegister() {
   const [passwordV, setPasswordV] = useState("");
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  // const { setUser, fetchUser } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -33,7 +32,8 @@ export default function FormRegister() {
         .then((data) => {
           console.log("Успех:", data);
           // fetchUser(); // загрузим текущего пользователя
-          navigate("/"); // редирект после регистрации
+          navigate("/login"); // редирект после регистрации
+          // window.location.reload();
         })
         .catch((err) => {
           console.error("Ошибка:", err);
