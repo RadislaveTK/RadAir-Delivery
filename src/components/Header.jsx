@@ -9,11 +9,11 @@ export default function Header() {
     <div
       style={{
         width: "100%",
-        position: "fixed",
+        // position: "fixed",
         left: 0,
         top: 0,
         zIndex: 20,
-        height: "15%",
+        height: "80px",
         maxHeight: "80px",
         minHeight: "80px",
       }}
