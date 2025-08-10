@@ -5,7 +5,7 @@ export default function Card({ children, ...props }) {
   const navigate = useNavigate();
 
   return (
-    <button {...props} className="card" onClick={() => navigate(-1)}> 
+    <button {...props} className="card" onClick={() => navigate("/")}> 
       {children}
     </button>
   );
