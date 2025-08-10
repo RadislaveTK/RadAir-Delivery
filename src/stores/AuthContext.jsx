@@ -11,9 +11,10 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       // Шаг 1: Получить CSRF cookie
-      // await fetch(`${host}/sanctum/csrf-cookie`, {
-      //   credentials: "include",
-      // });
+      await fetch(`${host}/sanctum/csrf-cookie`, {
+        credentials: "include",
+      });
+      
       let token = Cookies.get('token');
       if (!token) {
         console.warn("Не авторизован");
