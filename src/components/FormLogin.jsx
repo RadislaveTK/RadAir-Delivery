@@ -44,10 +44,11 @@ export default function FormLogin() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-CSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+            "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
             'Accept': 'application/json',
           },
           credentials: "include", // обязательно, если используешь sanctum
+          
           body: JSON.stringify({
             phone: phone,
             password: password,
