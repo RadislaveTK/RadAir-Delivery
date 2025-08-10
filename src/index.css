@@ -256,6 +256,7 @@ input[type="search"]::-webkit-search-cancel-button {
   height: 75%;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 10px;
 }
 
 .heading {
