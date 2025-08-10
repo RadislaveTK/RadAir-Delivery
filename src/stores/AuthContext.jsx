@@ -12,10 +12,11 @@ export const AuthProvider = ({ children }) => {
     try {
       // Шаг 1: Получить CSRF cookie
       await fetch(`${host}/sanctum/csrf-cookie`, {
+        method: "get",
         credentials: "include",
       });
-      
-      let token = Cookies.get('token');
+
+      let token = Cookies.get("token");
       if (!token) {
         console.warn("Не авторизован");
         setUser(false);
@@ -27,8 +28,11 @@ export const AuthProvider = ({ children }) => {
         method: "GET",
         credentials: "include",
         headers: {
-          "Authorization": `Bearer ${token}`,
-        }
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!res.ok) {
@@ -40,7 +44,6 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
       setUser(data);
       console.log(data);
-      
     } catch (err) {
       console.error("Ошибка при получении пользователя:", err);
       setUser(false);

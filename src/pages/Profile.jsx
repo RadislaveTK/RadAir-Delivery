@@ -15,16 +15,24 @@ export default function NotFound() {
   const logout = async (e) => {
     e.preventDefault();
 
-    await fetch(`https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`, {
+    fetch(
+      `https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
+      {
+        method: "get",
         credentials: "include",
-    });
-    
+      }
+    );
+
     fetch(
       "https://radair-delivery-back-production-21b4.up.railway.app/logout",
       {
         method: "POST",
         credentials: "include",
-        headers: { Accept: "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+          Accept: "application/json",
+        },
       }
     )
       .then((res) => res.json())

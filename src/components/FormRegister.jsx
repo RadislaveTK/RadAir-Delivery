@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 // import { useAuth } from "../stores/AuthContext";
 
 export default function FormRegister() {
@@ -16,22 +17,31 @@ export default function FormRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch(`https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`, {
-        credentials: "include",
-      });
-      
-      fetch("https://radair-delivery-back-production-21b4.up.railway.app/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // обязательно, если используешь sanctum
-        body: JSON.stringify({
-          name: name,
-          phone: phone,
-          password: password,
-        }),
-      })
+      fetch(
+        `https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
+        {
+          method: "get",
+          credentials: "include",
+        }
+      );
+
+      fetch(
+        "https://radair-delivery-back-production-21b4.up.railway.app/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+            Accept: "application/json",
+          },
+          credentials: "include", // обязательно, если используешь sanctum
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            password: password,
+          }),
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           console.log("Успех:", data);

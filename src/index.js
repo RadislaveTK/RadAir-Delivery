@@ -4,13 +4,6 @@ import App from "./App";
 import { GeoProvider } from "./stores/GeoContext";
 import { AuthProvider } from "./stores/AuthContext";
 
-await fetch(
-  "https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie",
-  {
-    credentials: "include",
-  }
-);
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
