@@ -62,7 +62,7 @@ export default function FormLogin() {
           if (data.status === "error" && data.response_code === 401)
             setError("Неверные данные");
           if (data.status === "success" && data.response_code === 200) {
-            Cookies.set("token", data.token);
+            // Cookies.set("token", data.token);
             setUser(data.user);
             navigate("/"); // редирект после регистрации
           }

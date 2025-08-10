@@ -16,12 +16,12 @@ export const AuthProvider = ({ children }) => {
         credentials: "include",
       });
 
-      let token = Cookies.get("token");
-      if (!token) {
-        console.warn("Не авторизован");
-        setUser(false);
-        return;
-      }
+      // let token = Cookies.get("token");
+      // if (!token) {
+      //   console.warn("Не авторизован");
+      //   setUser(false);
+      //   return;
+      // }
 
       // Шаг 2: Запрос текущего пользователя
       const res = await fetch(`${host}/user`, {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
           "Content-Type": "application/json",
           "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
           Accept: "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
       });
 
