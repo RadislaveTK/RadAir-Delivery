@@ -41,6 +41,7 @@ export default function FormLogin() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'X-CSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
           },
           credentials: "include", // обязательно, если используешь sanctum
           body: JSON.stringify({
