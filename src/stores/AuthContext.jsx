@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Шаг 2: Запрос текущего пользователя
-      const res = await fetch(`${host}/api/user`, {
+      const res = await fetch(`${host}/user`, {
         method: "GET",
         credentials: "include",
         headers: {

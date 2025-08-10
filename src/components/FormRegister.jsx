@@ -16,7 +16,11 @@ export default function FormRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/register", {
+      fetch(`https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`, {
+        credentials: "include",
+      });
+      
+      fetch("https://radair-delivery-back-production-21b4.up.railway.app/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
