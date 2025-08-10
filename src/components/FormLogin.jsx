@@ -30,18 +30,22 @@ export default function FormLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
+      fetch(
+        `https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
+        {
+          method: "get",
+          credentials: "include",
+        }
+      );
 
-      fetch(`https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`, {
-        credentials: "include",
-      });
-      
       fetch(
         "https://radair-delivery-back-production-21b4.up.railway.app/login",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'X-CSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
+            "X-CSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
+            'Accept': 'application/json',
           },
           credentials: "include", // обязательно, если используешь sanctum
           body: JSON.stringify({
