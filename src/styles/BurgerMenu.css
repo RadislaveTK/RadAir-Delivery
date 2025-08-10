@@ -9,9 +9,9 @@
   cursor: pointer;
   border: none;
   padding: 10px;
-  position: fixed;
   z-index: 20;
-  top: 20px;
+  position: absolute;
+  top: 10%;
   left: 10px;
   gap: 4px;
   flex-direction: column;
@@ -28,7 +28,9 @@
 }
 
 .burger-container {
-  position: relative;
+  position: absolute;
+  top: 0;
+  height: 100%;
 }
 
 .burger-menu > span {
@@ -95,7 +97,7 @@
   justify-content: center;
 }
 
-.menu-ad>span {
+.menu-ad > span {
   color: #ff9800;
   font-size: 19px;
 }
