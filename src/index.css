@@ -328,7 +328,7 @@ footer {
 }
 
 .card img {
-  width: 15vh;
+  height: 10vh;
 }
 
 @media (max-height: 680px) {
