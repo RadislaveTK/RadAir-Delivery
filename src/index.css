@@ -327,6 +327,10 @@ footer {
   justify-content: space-around;
 }
 
+.card img {
+  width: 15vh;
+}
+
 @media (max-height: 680px) {
   .heading {
     font-size: 35px;
@@ -336,8 +340,5 @@ footer {
   }
   .card-container {
     gap: 15px;
-  }
-  .card img {
-    width: 20vh;
   }
 }
