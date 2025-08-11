@@ -74,7 +74,7 @@ export default function SearchP() {
             <hr />
           </div>
 
-          <ul className="card-products">
+          <div className="card-products">
             {products.map((p) => (
               <CardProduct key={p.id}>
                 <img
@@ -84,7 +84,7 @@ export default function SearchP() {
                 {p.name}
               </CardProduct>
             ))}
-          </ul>
+          </div>
         </div>
       </Main>
 
