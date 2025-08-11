@@ -76,7 +76,7 @@ export default function SearchP() {
           <ul>
             {products.map((p) => (
               <CardProduct key={p.id}>
-                <img src={`assets/products/${p.img}`} alt="Icon" />
+                <img src={p.img} alt="Icon" />
                 {p.name}
               </CardProduct>
             ))}
