@@ -338,7 +338,7 @@ footer {
 }
 
 .profile-block {
-  align-items: flex-start;
+  align-items: center;
   background-color: #fff;
   border: 2px solid #963736;
   border-radius: 20px;

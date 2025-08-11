@@ -20,7 +20,8 @@ export default function SearchP() {
     return () => clearTimeout(timer); // очистка при следующем вводе
   }, [value]);
 
-  fetch(
+  useEffect(()=>{
+    fetch(
     `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search`
   )
     .then((res) => {
@@ -30,12 +31,13 @@ export default function SearchP() {
       return res.json();
     })
     .then((data) => {
-    //   console.log("Результаты поиска:", data);
+      //   console.log("Результаты поиска:", data);
       setProducts(data); // если нужно отрисовать
     })
     .catch((err) => {
       console.error("Ошибка:", err);
     });
+  })
 
   // 👇 Запрос срабатывает только когда debouncedValue изменяется
   useEffect(() => {
@@ -86,8 +88,10 @@ export default function SearchP() {
             style={{ fontFamily: "Nunito", fontWeight: "bold" }}
             className="heading"
           >
-            Результат поиска
+            Результат поиска:
           </h1>
+
+          <hr />
 
           {/* Пример отрисовки результатов */}
           <ul>
