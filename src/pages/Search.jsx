@@ -80,14 +80,14 @@ export default function SearchP() {
 
           <div className="card-products">
             {products.map((p) => (
-              <CardProduct key={p.id} style={{ height: "200px" }}>
+              <CardProduct key={p.id}>
                 <img
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
                   alt={p.name}
                 />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button><img src="/assets/icons/money.svg" alt="money" />{p.price}</button>
+                <button><img src="/assets/icons/money.svg" alt="money" />{p.price} тг</button>
               </CardProduct>
             ))}
           </div>

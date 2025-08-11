@@ -396,6 +396,10 @@ hr {
   width: auto;
 }
 
+.card {
+  height: 220px;
+}
+
 .card > button {
   background: #963736;
   color: #f7f6f3;
@@ -413,6 +417,7 @@ hr {
 .card > button > img {
   width: 25px;
   height: auto;
+  margin-right: 5px;
 }
 
 .card-products h3 {
