@@ -18,11 +18,20 @@ export default function GeoModal() {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const placemarkRef = useRef(null);
+
+  const userInteractingRef = useRef(false);
+  const panRequestedRef = useRef(false);
+
+  // refs to store handler functions so we can remove them on destroy
+  const actionBeginHandlerRef = useRef(null);
+  const actionEndHandlerRef = useRef(null);
+  const dragendHandlerRef = useRef(null);
+
   const touchStartYRef = useRef(null);
 
   const { setAddress, address } = useContext(GeoContext);
 
-  // Инициализация координат из cookies
+  // Инициализация координат из cookie (только один раз)
   useEffect(() => {
     const cord = Cookies.get("cords");
     if (cord) {
@@ -33,9 +42,10 @@ export default function GeoModal() {
           return;
         }
       } catch (e) {
-        console.error("Ошибка парсинга координат из cookie:", e);
+        console.error("Ошибка при парсинге координат из cookie:", e);
       }
     }
+    // координаты по умолчанию
     setMarkerCoords([54.8738652, 69.0780488]);
   }, []);
 
@@ -49,7 +59,7 @@ export default function GeoModal() {
     setTimeout(() => setIsVisible(false), 300);
   };
 
-  // Получение подсказок
+  // Подсказки (геокод)
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
     const bbox = "69.098888,54.840701~69.235726,54.906668";
@@ -61,31 +71,32 @@ export default function GeoModal() {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
       const data = await response.json();
-      const items = data.response.GeoObjectCollection.featureMember;
+      const items = data.response.GeoObjectCollection.featureMember || [];
 
-      setSuggestions(
-        items.map((item) => {
-          const geo = item.GeoObject;
-          const coords = geo.Point.pos.split(" ").map(Number).reverse();
-          const components =
-            geo.metaDataProperty.GeocoderMetaData.Address.Components;
+      const results = items.map((item) => {
+        const geo = item.GeoObject;
+        const coords = geo.Point.pos.split(" ").map(Number).reverse();
+        const components =
+          geo.metaDataProperty.GeocoderMetaData.Address.Components || [];
 
-          const city =
-            components.find((c) => c.kind === "locality")?.name || "";
-          const street =
-            components.find((c) => c.kind === "street")?.name || "";
-          const house =
-            components.find((c) => c.kind === "house")?.name || "";
+        const city =
+          components.find((c) => c.kind === "locality")?.name || "";
+        const street =
+          components.find((c) => c.kind === "street")?.name || "";
+        const house =
+          components.find((c) => c.kind === "house")?.name || "";
 
-          return {
-            name: geo.name,
-            coords,
-            formattedAddress: `${city}, ${street} ${house}`.trim(),
-          };
-        })
-      );
+        return {
+          name: geo.name,
+          description: geo.description,
+          coords,
+          formattedAddress: `${city}, ${street} ${house}`.trim(),
+        };
+      });
+
+      setSuggestions(results);
     } catch (error) {
-      console.error("Ошибка при запросе:", error);
+      console.error("Ошибка при запросе подсказок:", error);
     }
   };
 
@@ -93,60 +104,116 @@ export default function GeoModal() {
     setShouldFetch(false);
     setSearchText(item.name);
     setSuggestions([]);
+    // при выборе из подсказок считаем, что нужно подцентровать карту
+    panRequestedRef.current = true;
     setMarkerCoords(item.coords);
     setAddress(item.name);
   };
 
   useEffect(() => {
     if (!searchText.trim() || !shouldFetch) return;
-    const delay = setTimeout(() => fetchGeocodeData(searchText), 700);
-    return () => clearTimeout(delay);
+    const id = setTimeout(() => fetchGeocodeData(searchText), 700);
+    return () => clearTimeout(id);
   }, [searchText, shouldFetch]);
 
-  // Автогеолокация
+  // Автогеолокация единоразово
   useEffect(() => {
     if (!navigator.geolocation || Cookies.get("cords")) return;
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = [pos.coords.latitude, pos.coords.longitude];
         setMarkerCoords((prev) => {
           if (!prev || prev[0] !== coords[0] || prev[1] !== coords[1]) {
+            // при автопозиции хотим подцентровать карту
+            panRequestedRef.current = true;
             return coords;
           }
           return prev;
         });
       },
-      (error) => console.warn("Ошибка геолокации:", error.message)
+      (error) => {
+        console.warn("Ошибка геолокации:", error.message);
+      }
     );
   }, []);
 
-  // Уничтожение карты при закрытии
+  // Уничтожаем карту при закрытии модалки или размонтировании
   useEffect(() => {
     if (!isOpen && mapInstanceRef.current) {
-      mapInstanceRef.current.destroy();
-      mapInstanceRef.current = null;
-      placemarkRef.current = null;
+      try {
+        // удаляем слушатели с метки
+        if (placemarkRef.current && dragendHandlerRef.current) {
+          placemarkRef.current.events.remove("dragend", dragendHandlerRef.current);
+        }
+        // удаляем слушатели с карты
+        if (mapInstanceRef.current) {
+          if (actionBeginHandlerRef.current) {
+            mapInstanceRef.current.events.remove("actionbegin", actionBeginHandlerRef.current);
+          }
+          if (actionEndHandlerRef.current) {
+            mapInstanceRef.current.events.remove("actionend", actionEndHandlerRef.current);
+          }
+        }
+
+        mapInstanceRef.current.destroy();
+      } catch (e) {
+        // игнорируем ошибки destroy
+      } finally {
+        mapInstanceRef.current = null;
+        placemarkRef.current = null;
+        actionBeginHandlerRef.current = null;
+        actionEndHandlerRef.current = null;
+        dragendHandlerRef.current = null;
+      }
     }
+
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.destroy();
+        try {
+          if (placemarkRef.current && dragendHandlerRef.current) {
+            placemarkRef.current.events.remove("dragend", dragendHandlerRef.current);
+          }
+          if (mapInstanceRef.current) {
+            if (actionBeginHandlerRef.current) {
+              mapInstanceRef.current.events.remove("actionbegin", actionBeginHandlerRef.current);
+            }
+            if (actionEndHandlerRef.current) {
+              mapInstanceRef.current.events.remove("actionend", actionEndHandlerRef.current);
+            }
+          }
+          mapInstanceRef.current.destroy();
+        } catch (e) {}
         mapInstanceRef.current = null;
         placemarkRef.current = null;
       }
     };
   }, [isOpen]);
 
-  // Инициализация/обновление карты
+  // Инициализация/обновление карты (реактор + предотвращение конфликтов с пользователем)
   useEffect(() => {
     if (!isOpen || !mapRef.current || !markerCoords) return;
 
     const initOrUpdate = () => {
+      // Если карта уже создана, просто обновляем метку и (при необходимости) центр
       if (mapInstanceRef.current) {
-        placemarkRef.current?.geometry.setCoordinates(markerCoords);
-        mapInstanceRef.current.setCenter(markerCoords);
+        try {
+          if (placemarkRef.current) {
+            placemarkRef.current.geometry.setCoordinates(markerCoords);
+          }
+          // Центрируем карту только если пользователь не взаимодействует или специально запрошено
+          if (!userInteractingRef.current || panRequestedRef.current) {
+            // setCenter без анимации (duration:0) — чтобы не дергать
+            mapInstanceRef.current.setCenter(markerCoords, null, { duration: 0 });
+            panRequestedRef.current = false;
+          }
+        } catch (e) {
+          console.warn("Ошибка при обновлении карты:", e);
+        }
         return;
       }
 
+      // Создаём карту и метку
       const map = new window.ymaps.Map(mapRef.current, {
         center: markerCoords,
         zoom: 17,
@@ -159,15 +226,37 @@ export default function GeoModal() {
         { preset: "islands#redIcon", draggable: true }
       );
 
-      placemark.events.add("dragend", () => {
-        setMarkerCoords(placemark.geometry.getCoordinates());
-      });
+      // dragend: помечаем, что нужно паннуть и обновляем coords
+      const dragHandler = () => {
+        const coords = placemark.geometry.getCoordinates();
+        panRequestedRef.current = true;
+        setMarkerCoords(coords);
+      };
+      dragendHandlerRef.current = dragHandler;
+      placemark.events.add("dragend", dragendHandlerRef.current);
 
       map.geoObjects.add(placemark);
+
+      // слушатели actionbegin/actionend чтобы понять, взаимодействует ли пользователь
+      const beginHandler = () => {
+        userInteractingRef.current = true;
+      };
+      const endHandler = () => {
+        // небольшая задержка, чтобы убедиться, что действие завершилось
+        setTimeout(() => {
+          userInteractingRef.current = false;
+        }, 50);
+      };
+      actionBeginHandlerRef.current = beginHandler;
+      actionEndHandlerRef.current = endHandler;
+      map.events.add("actionbegin", actionBeginHandlerRef.current);
+      map.events.add("actionend", actionEndHandlerRef.current);
+
       mapInstanceRef.current = map;
       placemarkRef.current = placemark;
     };
 
+    // Подгружаем скрипт (один раз) и затем вызываем initOrUpdate
     if (!window.ymaps) {
       if (!document.querySelector("script[data-ymaps-loaded]")) {
         const script = document.createElement("script");
@@ -176,19 +265,25 @@ export default function GeoModal() {
         script.onload = () => window.ymaps.ready(initOrUpdate);
         document.head.appendChild(script);
       } else {
-        window.ymaps.ready(initOrUpdate);
+        window.ymaps && window.ymaps.ready(initOrUpdate);
       }
     } else {
       window.ymaps.ready(initOrUpdate);
     }
   }, [isOpen, markerCoords]);
 
-  // Геокодирование координат
+  // Геокодирование координат — дебаунс, чтобы не делать тонну запросов при быстрых изменениях
   useEffect(() => {
-    if (!markerCoords || JSON.stringify(markerCoords) === JSON.stringify(prevCoords.current)) return;
+    if (
+      !markerCoords ||
+      JSON.stringify(markerCoords) === JSON.stringify(prevCoords.current)
+    )
+      return;
+
     prevCoords.current = markerCoords;
 
-    window.ymaps.ready(() => {
+    const id = setTimeout(() => {
+      if (!window.ymaps) return;
       window.ymaps.geocode(markerCoords).then((res) => {
         const firstGeoObject = res.geoObjects.get(0);
         if (firstGeoObject) {
@@ -196,15 +291,23 @@ export default function GeoModal() {
           const house = firstGeoObject.getPremiseNumber() || "";
           const fullAddress = `${street} ${house}`.trim();
           setAddress(fullAddress);
-          Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax" });
+          // сохраняем coords в cookie (или localStorage, если нужно)
+          try {
+            Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax" });
+          } catch (e) {
+            // безопасный fallback
+            localStorage.setItem("cords", JSON.stringify(markerCoords));
+          }
         }
       });
-    });
+    }, 350); // <- регулировать задержку: 350ms — обычно хороший компромисс
+
+    return () => clearTimeout(id);
   }, [markerCoords, setAddress]);
 
-  // Свайп вниз
+  // Свайп вниз для закрытия (оставил как у тебя)
   const handleTouchStart = (e) => {
-    if (mapRef.current?.contains(e.target)) {
+    if (mapRef.current && mapRef.current.contains(e.target)) {
       touchStartYRef.current = null;
       return;
     }
@@ -213,16 +316,20 @@ export default function GeoModal() {
 
   const handleTouchMove = (e) => {
     if (touchStartYRef.current === null) return;
-    const distance = e.touches[0].clientY - touchStartYRef.current;
+    const currentY = e.touches[0].clientY;
+    const distance = currentY - touchStartYRef.current;
     if (distance > 0) {
       setSwipeDistance(distance);
-      modalRef.current.style.transform = `translateY(${distance}px)`;
+      if (modalRef.current) modalRef.current.style.transform = `translateY(${distance}px)`;
     }
   };
 
   const handleTouchEnd = () => {
-    if (swipeDistance > 100) closeModal();
-    else modalRef.current.style.transform = "";
+    if (swipeDistance > 100) {
+      closeModal();
+    } else if (modalRef.current) {
+      modalRef.current.style.transform = "";
+    }
     touchStartYRef.current = null;
     setSwipeDistance(0);
   };
@@ -258,7 +365,11 @@ export default function GeoModal() {
                 setSearchText(e.target.value);
                 setShouldFetch(true);
               }}
-              onKeyDown={(e) => e.code === "Enter" && setShouldFetch(true)}
+              onKeyDown={(e) => {
+                if (e.code === "Enter") {
+                  setShouldFetch(true);
+                }
+              }}
             />
             {suggestions.length > 0 && (
               <ul className="geo-suggestions">
