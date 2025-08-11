@@ -64,7 +64,7 @@ export default function NotFound() {
       <Main>
         <BackBtn />
         <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1>
-        <div class="auth-block">
+        <div class="profile-block">
           <div>
             <span>{user.phone}</span>
             <p>Телефон</p>
