@@ -16,7 +16,7 @@ export default function BackBtn() {
     width: "120px",
     height: "40px",
     color: "#fff",
-    fontSize: "20px",
+    fontSize: "15px",
     padding: "0 10px",
     // top: "15%",
     left: "5%",
