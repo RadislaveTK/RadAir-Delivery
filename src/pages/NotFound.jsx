@@ -13,7 +13,7 @@ export default function NotFound() {
 
       <Main>
         <BackBtn />
-        <h1 style={{ textAlign: "center", fontWeight: 700, color: "#963736", marginTop: "50%"}}>
+        <h1 style={{ textAlign: "center", fontWeight: 700, color: "#963736"}}>
           404
           <br />
           Не найдено
