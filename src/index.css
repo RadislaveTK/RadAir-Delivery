@@ -396,10 +396,6 @@ hr {
   width: auto;
 }
 
-.card {
-  height: 220px;
-}
-
 .card > button {
   background: #963736;
   color: #f7f6f3;
