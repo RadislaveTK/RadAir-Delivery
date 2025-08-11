@@ -127,63 +127,108 @@ export default function GeoModal() {
     );
   }, [markerCoords]);
 
-  useEffect(() => {
-    if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords) return;
+  // useEffect(() => {
+  //   if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords) return;
 
-    mapInstanceRef.current.setCenter(markerCoords);
-    placemarkRef.current.geometry.setCoordinates(markerCoords);
-  }, [markerCoords]);
+  //   mapInstanceRef.current.setCenter(markerCoords);
+  //   placemarkRef.current.geometry.setCoordinates(markerCoords);
+  // }, [markerCoords]);
+
+  useEffect(() => {
+  // когда модалка закрывается — убираем карту и метку
+  if (!isOpen) {
+    if (mapInstanceRef.current) {
+      try {
+        mapInstanceRef.current.destroy();
+      } catch (e) {
+        console.warn("Ошибка при destroy карты:", e);
+      }
+      mapInstanceRef.current = null;
+      placemarkRef.current = null;
+    }
+  }
+  // Когда компонент размонтируется — тоже уничтожим
+  return () => {
+    if (mapInstanceRef.current) {
+      try {
+        mapInstanceRef.current.destroy();
+      } catch (e) {}
+      mapInstanceRef.current = null;
+      placemarkRef.current = null;
+    }
+  };
+}, [isOpen]);
+
 
   // Инициализация карты
-  useEffect(() => {
-    if (!isOpen || !mapRef.current || !markerCoords) return;
+// Инициализация/обновление карты — вызывается при открытии модалки и при изменении markerCoords
+useEffect(() => {
+  if (!isOpen || !mapRef.current || !markerCoords) return;
 
-    const initMap = () => {
-      if (mapInstanceRef.current) mapInstanceRef.current.destroy();
-
-      const map = new window.ymaps.Map(mapRef.current, {
-        center: markerCoords,
-        zoom: 17,
-        controls: [],
-      });
-
-      const placemark = new window.ymaps.Placemark(
-        markerCoords,
-        { balloonContent: "Вы здесь" },
-        { preset: "islands#redIcon", draggable: true }
-      );
-
-      placemark.events.add("dragend", () => {
-        const coords = placemark.geometry.getCoordinates();
-        setMarkerCoords(coords);
-      });
-
-      map.geoObjects.add(placemark);
-      // map.events.add("click", (e) => setMarkerCoords(e.get("coords")));
-
-      mapInstanceRef.current = map;
-      placemarkRef.current = placemark;
-
-      const copyrights = document.querySelector(".ymaps-2-1-79-copyrights-pane");
-      if (copyrights) copyrights.remove();
-    };
-
-    if (!window.ymaps) {
-      const script = document.createElement("script");
-      script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
-      script.onload = () => window.ymaps.ready(initMap);
-      document.head.appendChild(script);
-    } else {
-      window.ymaps.ready(initMap);
+  const initOrUpdate = () => {
+    // Если карта уже инициализирована — просто обновляем центр и метку
+    if (mapInstanceRef.current) {
+      try {
+        if (placemarkRef.current) {
+          placemarkRef.current.geometry.setCoordinates(markerCoords);
+        }
+        mapInstanceRef.current.setCenter(markerCoords);
+      } catch (e) {
+        console.warn("Ошибка при обновлении карты:", e);
+      }
+      return;
     }
 
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.destroy();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [isOpen]);
+    // Иначе — создаём карту и метку
+    const map = new window.ymaps.Map(mapRef.current, {
+      center: markerCoords,
+      zoom: 17,
+      controls: [],
+    });
+
+    const placemark = new window.ymaps.Placemark(
+      markerCoords,
+      { balloonContent: "Вы здесь" },
+      { preset: "islands#redIcon", draggable: true }
+    );
+
+    placemark.events.add("dragend", () => {
+      const coords = placemark.geometry.getCoordinates();
+      setMarkerCoords(coords);
+    });
+
+    map.geoObjects.add(placemark);
+
+    mapInstanceRef.current = map;
+    placemarkRef.current = placemark;
+
+    // Убираем копирайт (если есть)
+    const copyrights = document.querySelector(
+      ".ymaps-2-1-79-copyrights-pane"
+    );
+    if (copyrights) copyrights.remove();
+  };
+
+  // Подгружаем script, если нужно, и затем инициализируем/обновляем карту
+  if (!window.ymaps) {
+    // чтобы не вставлять скрипт несколько раз, можно пометить его data-атрибутом
+    if (!document.querySelector('script[data-ymaps-loaded]')) {
+      const script = document.createElement("script");
+      script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
+      script.setAttribute("data-ymaps-loaded", "1");
+      script.onload = () => window.ymaps.ready(initOrUpdate);
+      document.head.appendChild(script);
+    } else {
+      // скрипт есть, но ymaps еще не готов — дождёмся
+      window.ymaps && window.ymaps.ready(initOrUpdate);
+    }
+  } else {
+    window.ymaps.ready(initOrUpdate);
+  }
+
+  // НЕТ универсального destroy здесь! Уничтожать карту будем отдельно при закрытии модалки.
+}, [isOpen, markerCoords]); // <-- ESLint теперь счастлив
+
 
   // Геокодирование координат
   useEffect(() => {
