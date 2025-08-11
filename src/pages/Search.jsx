@@ -76,7 +76,7 @@ export default function SearchP() {
           <ul>
             {products.map((p) => (
               <CardProduct key={p.id}>
-                <img src={p.img} alt="Icon" />
+                <img src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/products/${p.img}`} alt="Icon" />
                 {p.name}
               </CardProduct>
             ))}
