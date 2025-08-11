@@ -331,6 +331,7 @@ footer {
 .main-container {
   height: 75%;
   justify-content: space-around;
+  padding: 20px 0;
 }
 
 .card img {
@@ -369,9 +370,15 @@ footer {
   width: 100%;
 }
 
+hr {
+  width: 100%;
+  border: 1px solid #963736;
+  box-shadow: 2px 2px 0 0 #ff9800, 4px 4px 4px 0 #00000040;
+}
+
 @media (max-height: 700px) {
   .heading {
-    font-size: 35px;
+    font-size: 30px;
   }
   .heading-p {
     font-size: 15px;
