@@ -55,7 +55,7 @@
   padding: 20px;
   padding-top: 80px;
   display: flex;
-  justify-content: center;
+  align-items: center;
   z-index: 15;
 
   border-right: #ff9800 5px solid;
