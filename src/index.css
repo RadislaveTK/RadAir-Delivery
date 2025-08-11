@@ -396,7 +396,7 @@ hr {
   width: auto;
 }
 
-.card-products > button {
+.card > button {
   background: #963736;
   color: #f7f6f3;
   display: flex;
@@ -410,7 +410,7 @@ hr {
   font-weight: 500;
 }
 
-.card-products > button > img {
+.card > button > img {
   width: 25px;
   height: auto;
 }
