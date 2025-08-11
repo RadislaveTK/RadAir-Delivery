@@ -183,7 +183,7 @@ export default function GeoModal() {
         mapInstanceRef.current = null;
       }
     };
-  }, [isOpen, markerCoords]);
+  }, [isOpen]);
 
   // Геокодирование координат
   useEffect(() => {
