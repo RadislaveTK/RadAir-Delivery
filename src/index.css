@@ -351,7 +351,7 @@ footer {
   gap: 5px;
   height: 50%;
   justify-content: space-evenly;
-  padding: 5px 5px 5px 20px;
+  padding: 5px 20px 5px 20px;
   text-shadow: 3px 3px 5px #00000040;
   transition: transform 0.1s ease;
   width: 80%;
@@ -362,10 +362,11 @@ footer {
 }
 
 .profile-inp {
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 @media (max-height: 700px) {

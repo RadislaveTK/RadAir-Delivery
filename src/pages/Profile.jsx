@@ -77,14 +77,14 @@ export default function NotFound() {
               <p>Имя</p>
               <span>{user.name}</span>
             </div>
-            <img src="/assets/icons/phone.svg" alt="phone" />
+            <img src="/assets/icons/badge.svg" alt="badge" />
           </div>
           <div className="profile-inp">
             <div>
               <p>Рейтинг</p>
               <span>{user.rating}</span>
             </div>
-            <img src="/assets/icons/phone.svg" alt="phone" />
+            <img src="/assets/icons/star.svg" alt="star" />
           </div>
         </div>
         <Button
