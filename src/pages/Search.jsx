@@ -81,7 +81,8 @@ export default function SearchP() {
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
                   alt={p.name}
                 />
-                {p.name}
+                <h3>{p.name}</h3>
+                <p>{p.producer}</p>
               </CardProduct>
             ))}
           </div>
