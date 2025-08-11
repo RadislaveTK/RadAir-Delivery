@@ -4,7 +4,6 @@ import "../styles/GeoModal.css";
 import { GeoContext } from "../stores/GeoContext";
 import Cookies from "js-cookie";
 
-
 export default function GeoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -57,7 +56,9 @@ export default function GeoModal() {
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
     const bbox = "69.098888,54.840701~69.235726,54.906668";
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(
+      query
+    )}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
@@ -67,16 +68,19 @@ export default function GeoModal() {
 
       // Обработка предложений
       const results = items.map((item) => {
-        
         const geo = item.GeoObject;
         const coords = geo.Point.pos.split(" ").map(Number).reverse();
 
         // Получаем компоненты адреса
-        const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
+        const components =
+          geo.metaDataProperty.GeocoderMetaData.Address.Components;
 
-        let city = components.find((comp) => comp.kind === "locality")?.name || '';
-        let street = components.find((comp) => comp.kind === "street")?.name || '';
-        let house = components.find((comp) => comp.kind === "house")?.name || '';
+        let city =
+          components.find((comp) => comp.kind === "locality")?.name || "";
+        let street =
+          components.find((comp) => comp.kind === "street")?.name || "";
+        let house =
+          components.find((comp) => comp.kind === "house")?.name || "";
 
         // Формируем строку адреса
         const formattedAddress = `${city}, ${street} ${house}`.trim();
@@ -100,9 +104,8 @@ export default function GeoModal() {
     setSearchText(`${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
-    setAddress(`${item.name}`);    
+    setAddress(`${item.name}`);
     console.log(`${item.name}`);
-    
   };
 
   // Подсказки
@@ -119,13 +122,18 @@ export default function GeoModal() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = [pos.coords.latitude, pos.coords.longitude];
-        setMarkerCoords(coords);
+        setMarkerCoords((prev) => {
+          if (!prev || prev[0] !== coords[0] || prev[1] !== coords[1]) {
+            return coords;
+          }
+          return prev;
+        });
       },
       (error) => {
         console.warn("Ошибка геолокации:", error.message);
       }
     );
-  }, [markerCoords]);
+  }, []); // пустой массив, чтобы ESLint не ругался
 
   // useEffect(() => {
   //   if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords) return;
@@ -135,100 +143,98 @@ export default function GeoModal() {
   // }, [markerCoords]);
 
   useEffect(() => {
-  // когда модалка закрывается — убираем карту и метку
-  if (!isOpen) {
-    if (mapInstanceRef.current) {
-      try {
-        mapInstanceRef.current.destroy();
-      } catch (e) {
-        console.warn("Ошибка при destroy карты:", e);
+    // когда модалка закрывается — убираем карту и метку
+    if (!isOpen) {
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.destroy();
+        } catch (e) {
+          console.warn("Ошибка при destroy карты:", e);
+        }
+        mapInstanceRef.current = null;
+        placemarkRef.current = null;
       }
-      mapInstanceRef.current = null;
-      placemarkRef.current = null;
     }
-  }
-  // Когда компонент размонтируется — тоже уничтожим
-  return () => {
-    if (mapInstanceRef.current) {
-      try {
-        mapInstanceRef.current.destroy();
-      } catch (e) {}
-      mapInstanceRef.current = null;
-      placemarkRef.current = null;
-    }
-  };
-}, [isOpen]);
-
+    // Когда компонент размонтируется — тоже уничтожим
+    return () => {
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.destroy();
+        } catch (e) {}
+        mapInstanceRef.current = null;
+        placemarkRef.current = null;
+      }
+    };
+  }, [isOpen]);
 
   // Инициализация карты
-// Инициализация/обновление карты — вызывается при открытии модалки и при изменении markerCoords
-useEffect(() => {
-  if (!isOpen || !mapRef.current || !markerCoords) return;
+  // Инициализация/обновление карты — вызывается при открытии модалки и при изменении markerCoords
+  useEffect(() => {
+    if (!isOpen || !mapRef.current || !markerCoords) return;
 
-  const initOrUpdate = () => {
-    // Если карта уже инициализирована — просто обновляем центр и метку
-    if (mapInstanceRef.current) {
-      try {
-        if (placemarkRef.current) {
-          placemarkRef.current.geometry.setCoordinates(markerCoords);
+    const initOrUpdate = () => {
+      // Если карта уже инициализирована — просто обновляем центр и метку
+      if (mapInstanceRef.current) {
+        try {
+          if (placemarkRef.current) {
+            placemarkRef.current.geometry.setCoordinates(markerCoords);
+          }
+          mapInstanceRef.current.setCenter(markerCoords);
+        } catch (e) {
+          console.warn("Ошибка при обновлении карты:", e);
         }
-        mapInstanceRef.current.setCenter(markerCoords);
-      } catch (e) {
-        console.warn("Ошибка при обновлении карты:", e);
+        return;
       }
-      return;
-    }
 
-    // Иначе — создаём карту и метку
-    const map = new window.ymaps.Map(mapRef.current, {
-      center: markerCoords,
-      zoom: 17,
-      controls: [],
-    });
+      // Иначе — создаём карту и метку
+      const map = new window.ymaps.Map(mapRef.current, {
+        center: markerCoords,
+        zoom: 17,
+        controls: [],
+      });
 
-    const placemark = new window.ymaps.Placemark(
-      markerCoords,
-      { balloonContent: "Вы здесь" },
-      { preset: "islands#redIcon", draggable: true }
-    );
+      const placemark = new window.ymaps.Placemark(
+        markerCoords,
+        { balloonContent: "Вы здесь" },
+        { preset: "islands#redIcon", draggable: true }
+      );
 
-    placemark.events.add("dragend", () => {
-      const coords = placemark.geometry.getCoordinates();
-      setMarkerCoords(coords);
-    });
+      placemark.events.add("dragend", () => {
+        const coords = placemark.geometry.getCoordinates();
+        setMarkerCoords(coords);
+      });
 
-    map.geoObjects.add(placemark);
+      map.geoObjects.add(placemark);
 
-    mapInstanceRef.current = map;
-    placemarkRef.current = placemark;
+      mapInstanceRef.current = map;
+      placemarkRef.current = placemark;
 
-    // Убираем копирайт (если есть)
-    const copyrights = document.querySelector(
-      ".ymaps-2-1-79-copyrights-pane"
-    );
-    if (copyrights) copyrights.remove();
-  };
+      // Убираем копирайт (если есть)
+      const copyrights = document.querySelector(
+        ".ymaps-2-1-79-copyrights-pane"
+      );
+      if (copyrights) copyrights.remove();
+    };
 
-  // Подгружаем script, если нужно, и затем инициализируем/обновляем карту
-  if (!window.ymaps) {
-    // чтобы не вставлять скрипт несколько раз, можно пометить его data-атрибутом
-    if (!document.querySelector('script[data-ymaps-loaded]')) {
-      const script = document.createElement("script");
-      script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
-      script.setAttribute("data-ymaps-loaded", "1");
-      script.onload = () => window.ymaps.ready(initOrUpdate);
-      document.head.appendChild(script);
+    // Подгружаем script, если нужно, и затем инициализируем/обновляем карту
+    if (!window.ymaps) {
+      // чтобы не вставлять скрипт несколько раз, можно пометить его data-атрибутом
+      if (!document.querySelector("script[data-ymaps-loaded]")) {
+        const script = document.createElement("script");
+        script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
+        script.setAttribute("data-ymaps-loaded", "1");
+        script.onload = () => window.ymaps.ready(initOrUpdate);
+        document.head.appendChild(script);
+      } else {
+        // скрипт есть, но ymaps еще не готов — дождёмся
+        window.ymaps && window.ymaps.ready(initOrUpdate);
+      }
     } else {
-      // скрипт есть, но ymaps еще не готов — дождёмся
-      window.ymaps && window.ymaps.ready(initOrUpdate);
+      window.ymaps.ready(initOrUpdate);
     }
-  } else {
-    window.ymaps.ready(initOrUpdate);
-  }
 
-  // НЕТ универсального destroy здесь! Уничтожать карту будем отдельно при закрытии модалки.
-}, [isOpen, markerCoords]); // <-- ESLint теперь счастлив
-
+    // НЕТ универсального destroy здесь! Уничтожать карту будем отдельно при закрытии модалки.
+  }, [isOpen, markerCoords]); // <-- ESLint теперь счастлив
 
   // Геокодирование координат
   useEffect(() => {
@@ -247,7 +253,10 @@ useEffect(() => {
           const house = firstGeoObject.getPremiseNumber() || "";
           const fullAddress = `${street} ${house}`.trim();
           setAddress(fullAddress);
-          Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax", });
+          Cookies.set("cords", JSON.stringify(markerCoords), {
+            expires: 7,
+            sameSite: "Lax",
+          });
         }
       });
     });
@@ -286,7 +295,13 @@ useEffect(() => {
     <>
       <Button className="geo-btn" onClick={openModal}>
         <img src="/assets/icons/location.svg" alt="location" />
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
           <h3 style={{ fontSize: "18px" }}>Мой адрес</h3>
           <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
             {address ? address : "Определить автоматически"}
@@ -295,7 +310,10 @@ useEffect(() => {
       </Button>
 
       {isVisible && (
-        <div className={`geo-overlay ${isOpen ? "show" : ""}`} onClick={closeModal}>
+        <div
+          className={`geo-overlay ${isOpen ? "show" : ""}`}
+          onClick={closeModal}
+        >
           <div
             className="geo-modal"
             ref={modalRef}
@@ -326,7 +344,10 @@ useEffect(() => {
               <ul className="geo-suggestions">
                 {suggestions.map((item, index) => {
                   return (
-                    <li key={index} onClick={() => handleSuggestionSelect(item)}>
+                    <li
+                      key={index}
+                      onClick={() => handleSuggestionSelect(item)}
+                    >
                       {item.formattedAddress}
                     </li>
                   );
@@ -338,8 +359,17 @@ useEffect(() => {
 
             <Button className="geo-btn-two" onClick={closeModal}>
               <img src="/assets/icons/location.svg" alt="location" width={34} />
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "5px" }}>
-                <h3 style={{ fontSize: "15px" }}>Мой адрес: {address ? address : "Определить автоматически"}</h3>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  marginLeft: "5px",
+                }}
+              >
+                <h3 style={{ fontSize: "15px" }}>
+                  Мой адрес: {address ? address : "Определить автоматически"}
+                </h3>
                 <h4 style={{ fontSize: "13px", color: "#D4C0B1" }}>
                   Изменить местоположение
                 </h4>
