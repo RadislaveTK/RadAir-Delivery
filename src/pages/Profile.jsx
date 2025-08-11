@@ -64,18 +64,27 @@ export default function NotFound() {
       <Main>
         <BackBtn />
         <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1>
-        <div class="profile-block">
-          <div>
-            <p>Телефон</p>
-            <span>{user.phone}</span>
+        <div className="profile-block">
+          <div className="profile-inp">
+            <div>
+              <p>Телефон</p>
+              <span>{user.phone}</span>
+            </div>
+            <img src="/assets/icons/phone.svg" alt="phone" />
           </div>
-          <div>
-            <p>Имя</p>
-            <span>{user.name}</span>
+          <div className="profile-inp">
+            <div>
+              <p>Имя</p>
+              <span>{user.name}</span>
+            </div>
+            <img src="/assets/icons/phone.svg" alt="phone" />
           </div>
-          <div>
-            <p>Рейтинг</p>
-            <span>{user.rating}</span>
+          <div className="profile-inp">
+            <div>
+              <p>Рейтинг</p>
+              <span>{user.rating}</span>
+            </div>
+            <img src="/assets/icons/phone.svg" alt="phone" />
           </div>
         </div>
         <Button

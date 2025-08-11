@@ -361,6 +361,13 @@ footer {
   font-size: 15px;
 }
 
+.profile-inp {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 @media (max-height: 700px) {
   .heading {
     font-size: 35px;
