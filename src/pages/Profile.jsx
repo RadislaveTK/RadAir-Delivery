@@ -63,7 +63,7 @@ export default function NotFound() {
 
       <Main>
         <BackBtn />
-        <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1>
+        {/* <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1> */}
         <div className="profile-block">
           <div className="profile-inp">
             <div>
@@ -86,13 +86,13 @@ export default function NotFound() {
             </div>
             <img src="/assets/icons/star.svg" alt="star" />
           </div>
+          <Button
+            style={{ padding: "10px 15px", fontSize: "15px" }}
+            onClick={logout}
+          >
+            Выйти из аккаунта
+          </Button>
         </div>
-        <Button
-          style={{ padding: "10px 15px", fontSize: "15px" }}
-          onClick={logout}
-        >
-          Выйти из аккаунта
-        </Button>
       </Main>
 
       <Fotter />
