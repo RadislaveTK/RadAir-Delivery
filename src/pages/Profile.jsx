@@ -66,16 +66,16 @@ export default function NotFound() {
         <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1>
         <div class="profile-block">
           <div>
-            <span>{user.phone}</span>
             <p>Телефон</p>
+            <span>{user.phone}</span>
           </div>
           <div>
-            <span>{user.name}</span>
             <p>Имя</p>
+            <span>{user.name}</span>
           </div>
           <div>
-            <span>{user.rating}</span>
             <p>Рейтинг</p>
+            <span>{user.rating}</span>
           </div>
         </div>
         <Button
