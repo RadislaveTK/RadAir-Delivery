@@ -21,6 +21,7 @@ export default function BackBtn() {
     left: "5%",
     cursor: "pointer",
     zIndex: 14,
+    top: "10px",
   };
 
   return (
