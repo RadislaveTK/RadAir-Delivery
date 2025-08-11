@@ -336,7 +336,7 @@ footer {
   height: 10vh;
 }
 
-@media (max-height: 680px) {
+@media (max-height: 700px) {
   .heading {
     font-size: 35px;
   }
