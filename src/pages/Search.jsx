@@ -21,7 +21,8 @@ export default function SearchP() {
 
   // Один универсальный запрос
   useEffect(() => {
-    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
+    let url =
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
 
     if (debouncedValue !== "") {
       url += `?name=${encodeURIComponent(debouncedValue)}`;
@@ -63,14 +64,15 @@ export default function SearchP() {
         </div>
 
         <div className="block">
-          <h1
-            style={{ fontFamily: "Nunito", fontWeight: "bold" }}
-            className="heading"
-          >
-            Результат поиска:
-          </h1>
-
-          <hr />
+          <div>
+            <h1
+              style={{ fontFamily: "Nunito", fontWeight: "bold" }}
+              className="heading"
+            >
+              Результат поиска:
+            </h1>
+            <hr />
+          </div>
 
           <ul>
             {products.map((p) => (
