@@ -66,7 +66,11 @@ export default function SearchP() {
         <div className="block">
           <div>
             <h1
-              style={{ fontFamily: "Nunito", fontWeight: "bold", margin: "15px 0", }}
+              style={{
+                fontFamily: "Nunito",
+                fontWeight: "bold",
+                margin: "15px 0",
+              }}
               className="heading"
             >
               Результат поиска:
@@ -76,7 +80,7 @@ export default function SearchP() {
 
           <div className="card-products">
             {products.map((p) => (
-              <CardProduct key={p.id}>
+              <CardProduct key={p.id} style={{ height: "200px" }}>
                 <img
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
                   alt={p.name}
