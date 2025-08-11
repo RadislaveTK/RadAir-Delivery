@@ -87,6 +87,7 @@ export default function SearchP() {
                 />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
+                <button><img src="/assets/icons/money.svg" alt="money" />{p.price}</button>
               </CardProduct>
             ))}
           </div>
