@@ -34,6 +34,13 @@ export default function Admin() {
     }
 
     try {
+      fetch(
+        `https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
+        {
+          method: "get",
+          credentials: "include",
+        }
+      );
       const res = await fetch(
         "https://radair-delivery-back-production-21b4.up.railway.app/api/product/create_product",
         {
