@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
-// import Search from "../components/Search";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
@@ -11,43 +10,24 @@ export default function SearchP() {
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
 
-  // 👇 Отложенное обновление debouncedValue
+  // Отложенное обновление debouncedValue
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, 700); // задержка 500 мс
+      setDebouncedValue(value.trim());
+    }, 700);
 
-    return () => clearTimeout(timer); // очистка при следующем вводе
+    return () => clearTimeout(timer);
   }, [value]);
 
-  useEffect(()=>{
-    fetch(
-    `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search`
-  )
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Ошибка при получении данных");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      //   console.log("Результаты поиска:", data);
-      setProducts(data); // если нужно отрисовать
-    })
-    .catch((err) => {
-      console.error("Ошибка:", err);
-    });
-  })
-
-  // 👇 Запрос срабатывает только когда debouncedValue изменяется
+  // Один универсальный запрос
   useEffect(() => {
-    if (debouncedValue.trim() === "") return;
+    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
 
-    fetch(
-      `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
-        debouncedValue
-      )}`
-    )
+    if (debouncedValue !== "") {
+      url += `?name=${encodeURIComponent(debouncedValue)}`;
+    }
+
+    fetch(url)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Ошибка при получении данных");
@@ -55,8 +35,7 @@ export default function SearchP() {
         return res.json();
       })
       .then((data) => {
-        console.log("Результаты поиска:", data);
-        setProducts(data); // если нужно отрисовать
+        setProducts(data);
       })
       .catch((err) => {
         console.error("Ошибка:", err);
@@ -93,13 +72,12 @@ export default function SearchP() {
 
           <hr />
 
-          {/* Пример отрисовки результатов */}
           <ul>
             {products.map((p) => (
               <CardProduct key={p.id}>
                 <img
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
-                  alt="Icon"
+                  alt={p.name}
                 />
                 {p.name}
               </CardProduct>
