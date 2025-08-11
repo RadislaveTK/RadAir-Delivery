@@ -1,3 +1,7 @@
+import Header from "../components/Header";
+import BgDop from "../components/BgDop";
+import Fotter from "../components/Fotter";
+import Main from "../components/Main";
 import { useState } from "react";
 
 export default function Admin() {
@@ -10,7 +14,7 @@ export default function Admin() {
     producer: "",
     country: "",
     category: "",
-    img: null
+    img: null,
   });
 
   const handleChange = (e) => {
@@ -30,10 +34,13 @@ export default function Admin() {
     }
 
     try {
-      const res = await fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/create_product", {
-        method: "POST",
-        body: fd // не ставим Content-Type, fetch сам проставит multipart/form-data
-      });
+      const res = await fetch(
+        "https://radair-delivery-back-production-21b4.up.railway.app/api/product/create_product",
+        {
+          method: "POST",
+          body: fd, // не ставим Content-Type, fetch сам проставит multipart/form-data
+        }
+      );
 
       const data = await res.json();
       console.log(data);
@@ -44,22 +51,48 @@ export default function Admin() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="name" placeholder="Название" onChange={handleChange} />
-      <input name="desc" placeholder="Описание" onChange={handleChange} />
-      <input name="volume" placeholder="Объём" onChange={handleChange} />
-      <input name="count" placeholder="Количество" onChange={handleChange} />
-      <input name="price" placeholder="Цена" onChange={handleChange} />
-      <input name="producer" placeholder="Производитель" onChange={handleChange} />
-      <input name="country" placeholder="Страна производства" onChange={handleChange} />
-      <select name="category" onChange={handleChange}>
-        <option value="">Выбери категорию</option>
-        <option value="fastfood">Fast Food</option>
-        <option value="restouran">Ресторан</option>
-        <option value="products">Продукты</option>
-      </select>
-      <input type="file" name="img" accept="image/*" onChange={handleChange} />
-      <button type="submit">Добавить товар</button>
-    </form>
+    <>
+      <Header />
+      <BgDop />
+
+      <Main>
+        <form onSubmit={handleSubmit}>
+          <input name="name" placeholder="Название" onChange={handleChange} />
+          <input name="desc" placeholder="Описание" onChange={handleChange} />
+          <input name="volume" placeholder="Объём" onChange={handleChange} />
+          <input
+            name="count"
+            placeholder="Количество"
+            onChange={handleChange}
+          />
+          <input name="price" placeholder="Цена" onChange={handleChange} />
+          <input
+            name="producer"
+            placeholder="Производитель"
+            onChange={handleChange}
+          />
+          <input
+            name="country"
+            placeholder="Страна производства"
+            onChange={handleChange}
+          />
+          <select name="category" onChange={handleChange}>
+            <option value="">Выбери категорию</option>
+            <option value="fastfood">Fast Food</option>
+            <option value="restouran">Ресторан</option>
+            <option value="products">Продукты</option>
+          </select>
+          <input
+            type="file"
+            name="img"
+            accept="image/*"
+            onChange={handleChange}
+          />
+          <button type="submit">Добавить товар</button>
+        </form>
+      </Main>
+
+      <Fotter />
+    </>
   );
 }
