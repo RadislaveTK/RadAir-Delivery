@@ -30,7 +30,7 @@ export default function Admin() {
     }
 
     try {
-      const res = await fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/create", {
+      const res = await fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/create_product", {
         method: "POST",
         body: fd // не ставим Content-Type, fetch сам проставит multipart/form-data
       });
