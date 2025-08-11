@@ -13,7 +13,7 @@ export default function BackBtn() {
     // border: "2px solid #FF9800",
     border: "none",
     borderRadius: "15px",
-    width: "120px",
+    width: "100px",
     height: "40px",
     color: "#fff",
     fontSize: "15px",
@@ -28,7 +28,7 @@ export default function BackBtn() {
 
   return (
     <button className="back-btn" style={style} onClick={() => navigate(-1)}>
-      <img src="/assets/icons/undo.svg" width={25} alt="img" />
+      <img src="/assets/icons/undo.svg" width={20} alt="img" />
       Назад
     </button>
   );
