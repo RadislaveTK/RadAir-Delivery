@@ -14,12 +14,12 @@ export default function Cart() {
       <Main>
         <BackBtn />
 
-        <h1 style={{ marginTop: "20%", color: "#963736" }}>Корзина</h1>
+        <h1 className="heading">Корзина</h1>
 
         <hr />
 
         <div className="block">
-            
+
         </div>
       </Main>
 

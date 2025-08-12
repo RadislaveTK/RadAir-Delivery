@@ -4,7 +4,7 @@ export default function CardProduct({ children, ...props }) {
   const navigate = useNavigate();
 
   return (
-    <div {...props} className="card" onClick={() => navigate(-1)}> 
+    <div {...props} className="card"> 
       {children}
     </div>
   );
