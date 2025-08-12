@@ -262,7 +262,7 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .heading {
   font-family: "Pacifico", cursive;
-  font-size: 40px;
+  font-size: clamp(30px, 10vw, 40px);
   font-weight: 400;
   color: #963736;
   text-shadow: 2px 2px 0px rgba(255, 152, 0, 1), 3px 3px 5px rgba(0, 0, 0, 0.25);
@@ -469,9 +469,9 @@ hr {
 }
 
 @media (max-height: 700px) {
-  .heading {
+  /* .heading {
     font-size: 40px;
-  }
+  } */
   .heading-p {
     font-size: 15px;
   }
