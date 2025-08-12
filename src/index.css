@@ -379,7 +379,7 @@ hr {
 .card-products {
   height: 100%;
   width: 80vw;
-  padding: 15px 0;
+  padding: 15px 5px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 20px;
