@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, useCallback } from "react";
 import Button from "./Button";
 import "../styles/GeoModal.css";
 import { GeoContext } from "../stores/GeoContext";
@@ -12,7 +12,6 @@ export default function GeoModal() {
   const [shouldFetch, setShouldFetch] = useState(true);
   const [markerCoords, setMarkerCoords] = useState(null);
   const prevCoords = useRef(null);
-
   const { setAddress, address } = useContext(GeoContext);
 
   const modalRef = useRef(null);
@@ -22,7 +21,7 @@ export default function GeoModal() {
   const touchStartYRef = useRef(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
 
-  // Получение координат из cookie
+  // Загружаем координаты из cookie или дефолт
   useEffect(() => {
     const cord = Cookies.get("cords");
     if (cord) {
@@ -33,10 +32,21 @@ export default function GeoModal() {
           return;
         }
       } catch (e) {
-        console.error("Ошибка при парсинге координат из cookie:", e);
+        console.error("Ошибка при парсинге cookie:", e);
       }
     }
     setMarkerCoords([54.8738652, 69.0780488]);
+  }, []);
+
+  // Определяем координаты из геолокации браузера один раз
+  useEffect(() => {
+    if (!navigator.geolocation || Cookies.get("cords")) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setMarkerCoords([pos.coords.latitude, pos.coords.longitude]);
+      },
+      (err) => console.warn("Ошибка геолокации:", err.message)
+    );
   }, []);
 
   const openModal = () => {
@@ -49,89 +59,45 @@ export default function GeoModal() {
     setTimeout(() => setIsVisible(false), 300);
   };
 
-  const fetchGeocodeData = async (query) => {
+  const fetchGeocodeData = useCallback(async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
     const bbox = "69.098888,54.840701~69.235726,54.906668";
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(
-      query
-    )}&format=json&bbox=${bbox}&rspn=1`;
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
       const data = await response.json();
-      const items = data.response.GeoObjectCollection.featureMember;
-
-      // Обработка предложений
-      const results = items.map((item) => {
+      const results = data.response.GeoObjectCollection.featureMember.map((item) => {
         const geo = item.GeoObject;
         const coords = geo.Point.pos.split(" ").map(Number).reverse();
-
-        // Получаем компоненты адреса
-        const components =
-          geo.metaDataProperty.GeocoderMetaData.Address.Components;
-
-        let city =
-          components.find((comp) => comp.kind === "locality")?.name || "";
-        let street =
-          components.find((comp) => comp.kind === "street")?.name || "";
-        let house =
-          components.find((comp) => comp.kind === "house")?.name || "";
-
-        // Формируем строку адреса
+        const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
+        let city = components.find((c) => c.kind === "locality")?.name || "";
+        let street = components.find((c) => c.kind === "street")?.name || "";
+        let house = components.find((c) => c.kind === "house")?.name || "";
         const formattedAddress = `${city}, ${street} ${house}`.trim();
-
-        return {
-          name: geo.name,
-          description: geo.description,
-          coords,
-          formattedAddress, // Добавляем форматированный адрес
-        };
+        return { name: geo.name, description: geo.description, coords, formattedAddress };
       });
-
-      setSuggestions(results); // Обновляем состояние
+      setSuggestions(results);
     } catch (error) {
       console.error("Ошибка при запросе:", error);
     }
-  };
-
-  const handleSuggestionSelect = (item) => {
-    setShouldFetch(false);
-    setSearchText(`${item.name}`);
-    setSuggestions([]);
-    setMarkerCoords(item.coords);
-    setAddress(`${item.formattedAddress}`);
-  };
+  }, []);
 
   // Подсказки
   useEffect(() => {
     if (!searchText.trim() || !shouldFetch) return;
     const delay = setTimeout(() => fetchGeocodeData(searchText), 700);
     return () => clearTimeout(delay);
-  }, [searchText, shouldFetch]);
+  }, [searchText, shouldFetch, fetchGeocodeData]);
 
-  // Геолокация браузера
-  useEffect(() => {
-    if (!navigator.geolocation || Cookies.get("cords")) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const coords = [pos.coords.latitude, pos.coords.longitude];
-        setMarkerCoords(coords);
-      },
-      (error) => {
-        console.warn("Ошибка геолокации:", error.message);
-      }
-    );
-  }, []); // пустой массив, эффект отработает только при монтировании
-
-  useEffect(() => {
-    if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords)
-      return;
-
-    mapInstanceRef.current.setCenter(markerCoords);
-    placemarkRef.current.geometry.setCoordinates(markerCoords);
-  }, [markerCoords]);
+  const handleSuggestionSelect = (item) => {
+    setShouldFetch(false);
+    setSearchText(item.name);
+    setSuggestions([]);
+    setMarkerCoords(item.coords);
+    setAddress(item.formattedAddress);
+  };
 
   // Инициализация карты
   useEffect(() => {
@@ -153,19 +119,14 @@ export default function GeoModal() {
       );
 
       placemark.events.add("dragend", () => {
-        const coords = placemark.geometry.getCoordinates();
-        setMarkerCoords(coords);
+        setMarkerCoords(placemark.geometry.getCoordinates());
       });
 
       map.geoObjects.add(placemark);
-      // map.events.add("click", (e) => setMarkerCoords(e.get("coords")));
-
       mapInstanceRef.current = map;
       placemarkRef.current = placemark;
 
-      const copyrights = document.querySelector(
-        ".ymaps-2-1-79-copyrights-pane"
-      );
+      const copyrights = document.querySelector(".ymaps-2-1-79-copyrights-pane");
       if (copyrights) copyrights.remove();
     };
 
@@ -184,33 +145,25 @@ export default function GeoModal() {
         mapInstanceRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [isOpen, markerCoords]);
 
-  // Геокодирование координат
+  // Обратное геокодирование при изменении координат
   useEffect(() => {
-    if (
-      !markerCoords ||
-      JSON.stringify(markerCoords) === JSON.stringify(prevCoords.current)
-    )
-      return;
+    if (!markerCoords || JSON.stringify(markerCoords) === JSON.stringify(prevCoords.current)) return;
     prevCoords.current = markerCoords;
 
-    window.ymaps.ready(() => {
-      window.ymaps.geocode(markerCoords).then((res) => {
-        const firstGeoObject = res.geoObjects.get(0);
-        if (firstGeoObject) {
-          const street = firstGeoObject.getThoroughfare() || "";
-          const house = firstGeoObject.getPremiseNumber() || "";
-          const fullAddress = `${street} ${house}`.trim();
-          setAddress(fullAddress);
-          Cookies.set("cords", JSON.stringify(markerCoords), {
-            expires: 7,
-            sameSite: "Lax",
-          });
-        }
-      });
+    if (!window.ymaps) return;
+    window.ymaps.geocode(markerCoords).then((res) => {
+      const firstGeoObject = res.geoObjects.get(0);
+      if (firstGeoObject) {
+        const street = firstGeoObject.getThoroughfare() || "";
+        const house = firstGeoObject.getPremiseNumber() || "";
+        const fullAddress = `${street} ${house}`.trim();
+        setAddress(fullAddress);
+        Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax" });
+      }
     });
-  }, [markerCoords]);
+  }, [markerCoords, setAddress]);
 
   // Свайп вниз для закрытия
   const handleTouchStart = (e) => {
@@ -245,25 +198,16 @@ export default function GeoModal() {
     <>
       <Button className="geo-btn" onClick={openModal}>
         <img src="/assets/icons/location.svg" alt="location" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <h3 style={{ fontSize: "18px" }}>Мой адрес</h3>
           <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
-            {address ? address : "Определить автоматически"}
+            {address || "Определить автоматически"}
           </h4>
         </div>
       </Button>
 
       {isVisible && (
-        <div
-          className={`geo-overlay ${isOpen ? "show" : ""}`}
-          onClick={closeModal}
-        >
+        <div className={`geo-overlay ${isOpen ? "show" : ""}`} onClick={closeModal}>
           <div
             className="geo-modal"
             ref={modalRef}
@@ -272,7 +216,6 @@ export default function GeoModal() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* <label htmlFor="inp_geo_search"><h2>Введите адрес</h2></label> */}
             <input
               id="inp_geo_search"
               type="text"
@@ -283,8 +226,7 @@ export default function GeoModal() {
                 setShouldFetch(true);
               }}
               onKeyDown={(e) => {
-                if (e.code == "Enter") {
-                  console.log(e);
+                if (e.code === "Enter") {
                   setSearchText(e.target.value);
                   setShouldFetch(true);
                 }
@@ -292,37 +234,20 @@ export default function GeoModal() {
             />
             {suggestions.length > 0 && (
               <ul className="geo-suggestions">
-                {suggestions.map((item, index) => {
-                  return (
-                    <li
-                      key={index}
-                      onClick={() => handleSuggestionSelect(item)}
-                    >
-                      {item.formattedAddress}
-                    </li>
-                  );
-                })}
+                {suggestions.map((item, index) => (
+                  <li key={index} onClick={() => handleSuggestionSelect(item)}>
+                    {item.formattedAddress}
+                  </li>
+                ))}
               </ul>
             )}
-            {/* <h3>Мое местоположение</h3> */}
             <div className="map-container" ref={mapRef} />
 
             <Button className="geo-btn-two" onClick={closeModal}>
               <img src="/assets/icons/location.svg" alt="location" width={34} />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  marginLeft: "5px",
-                }}
-              >
-                <h3 style={{ fontSize: "15px" }}>
-                  Мой адрес: {address ? address : "Определить автоматически"}
-                </h3>
-                <h4 style={{ fontSize: "13px", color: "#D4C0B1" }}>
-                  Изменить местоположение
-                </h4>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "5px" }}>
+                <h3 style={{ fontSize: "15px" }}>Мой адрес: {address || "Определить автоматически"}</h3>
+                <h4 style={{ fontSize: "13px", color: "#D4C0B1" }}>Изменить местоположение</h4>
               </div>
             </Button>
           </div>
