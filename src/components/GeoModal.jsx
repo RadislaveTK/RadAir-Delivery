@@ -4,7 +4,6 @@ import "../styles/GeoModal.css";
 import { GeoContext } from "../stores/GeoContext";
 import Cookies from "js-cookie";
 
-
 export default function GeoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -53,7 +52,9 @@ export default function GeoModal() {
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
     const bbox = "69.098888,54.840701~69.235726,54.906668";
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(
+      query
+    )}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
@@ -63,16 +64,19 @@ export default function GeoModal() {
 
       // Обработка предложений
       const results = items.map((item) => {
-        
         const geo = item.GeoObject;
         const coords = geo.Point.pos.split(" ").map(Number).reverse();
 
         // Получаем компоненты адреса
-        const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
+        const components =
+          geo.metaDataProperty.GeocoderMetaData.Address.Components;
 
-        let city = components.find((comp) => comp.kind === "locality")?.name || '';
-        let street = components.find((comp) => comp.kind === "street")?.name || '';
-        let house = components.find((comp) => comp.kind === "house")?.name || '';
+        let city =
+          components.find((comp) => comp.kind === "locality")?.name || "";
+        let street =
+          components.find((comp) => comp.kind === "street")?.name || "";
+        let house =
+          components.find((comp) => comp.kind === "house")?.name || "";
 
         // Формируем строку адреса
         const formattedAddress = `${city}, ${street} ${house}`.trim();
@@ -90,9 +94,6 @@ export default function GeoModal() {
       console.error("Ошибка при запросе:", error);
     }
   };
-
-
-
 
   const handleSuggestionSelect = (item) => {
     setShouldFetch(false);
@@ -122,17 +123,15 @@ export default function GeoModal() {
         console.warn("Ошибка геолокации:", error.message);
       }
     );
-  }, [markerCoords]);
+  }, []); // пустой массив, эффект отработает только при монтировании
 
   useEffect(() => {
-    if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords) return;
+    if (!mapInstanceRef.current || !placemarkRef.current || !markerCoords)
+      return;
 
     mapInstanceRef.current.setCenter(markerCoords);
     placemarkRef.current.geometry.setCoordinates(markerCoords);
   }, [markerCoords]);
-
-
-
 
   // Инициализация карты
   useEffect(() => {
@@ -164,7 +163,9 @@ export default function GeoModal() {
       mapInstanceRef.current = map;
       placemarkRef.current = placemark;
 
-      const copyrights = document.querySelector(".ymaps-2-1-79-copyrights-pane");
+      const copyrights = document.querySelector(
+        ".ymaps-2-1-79-copyrights-pane"
+      );
       if (copyrights) copyrights.remove();
     };
 
@@ -202,7 +203,10 @@ export default function GeoModal() {
           const house = firstGeoObject.getPremiseNumber() || "";
           const fullAddress = `${street} ${house}`.trim();
           setAddress(fullAddress);
-          Cookies.set("cords", JSON.stringify(markerCoords), { expires: 7, sameSite: "Lax", });
+          Cookies.set("cords", JSON.stringify(markerCoords), {
+            expires: 7,
+            sameSite: "Lax",
+          });
         }
       });
     });
@@ -241,7 +245,13 @@ export default function GeoModal() {
     <>
       <Button className="geo-btn" onClick={openModal}>
         <img src="/assets/icons/location.svg" alt="location" />
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
           <h3 style={{ fontSize: "18px" }}>Мой адрес</h3>
           <h4 style={{ fontSize: "15px", color: "#D4C0B1" }}>
             {address ? address : "Определить автоматически"}
@@ -250,7 +260,10 @@ export default function GeoModal() {
       </Button>
 
       {isVisible && (
-        <div className={`geo-overlay ${isOpen ? "show" : ""}`} onClick={closeModal}>
+        <div
+          className={`geo-overlay ${isOpen ? "show" : ""}`}
+          onClick={closeModal}
+        >
           <div
             className="geo-modal"
             ref={modalRef}
@@ -281,7 +294,10 @@ export default function GeoModal() {
               <ul className="geo-suggestions">
                 {suggestions.map((item, index) => {
                   return (
-                    <li key={index} onClick={() => handleSuggestionSelect(item)}>
+                    <li
+                      key={index}
+                      onClick={() => handleSuggestionSelect(item)}
+                    >
                       {item.formattedAddress}
                     </li>
                   );
@@ -293,8 +309,17 @@ export default function GeoModal() {
 
             <Button className="geo-btn-two" onClick={closeModal}>
               <img src="/assets/icons/location.svg" alt="location" width={34} />
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "5px" }}>
-                <h3 style={{ fontSize: "15px" }}>Мой адрес: {address ? address : "Определить автоматически"}</h3>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  marginLeft: "5px",
+                }}
+              >
+                <h3 style={{ fontSize: "15px" }}>
+                  Мой адрес: {address ? address : "Определить автоматически"}
+                </h3>
                 <h4 style={{ fontSize: "13px", color: "#D4C0B1" }}>
                   Изменить местоположение
                 </h4>
