@@ -75,7 +75,7 @@ export default function GeoModal() {
         let house = components.find((comp) => comp.kind === "house")?.name || '';
 
         // Формируем строку адреса
-        const formattedAddress = `${city}, ${street} ${house}`.trim();
+        const formattedAddress = `${street} ${house}`.trim();
 
         return {
           name: geo.name,
