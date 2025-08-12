@@ -42,10 +42,12 @@ export default function GeoModal() {
     if (!window.ymaps) {
       const script = document.createElement("script");
       script.src = "https://api-maps.yandex.ru/2.1/?lang=ru_RU";
-      script.onload = initMap;
+      script.onload = () => {
+        window.ymaps.ready(initMap); // Ждём готовности API
+      };
       document.head.appendChild(script);
     } else {
-      initMap();
+      window.ymaps.ready(initMap);
     }
   };
 
@@ -105,7 +107,9 @@ export default function GeoModal() {
   const fetchGeocodeData = async (query) => {
     const apiKey = "1384d8ed-dc59-4f30-bdc1-a6bec8a966eb";
     const bbox = "69.098888,54.840701~69.235726,54.906668";
-    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(query)}&format=json&bbox=${bbox}&rspn=1`;
+    const url = `https://geocode-maps.yandex.ru/v1/?apikey=${apiKey}&geocode=${encodeURIComponent(
+      query
+    )}&format=json&bbox=${bbox}&rspn=1`;
 
     try {
       const response = await fetch(url);
@@ -116,7 +120,8 @@ export default function GeoModal() {
       const results = items.map((item) => {
         const geo = item.GeoObject;
         const coords = geo.Point.pos.split(" ").map(Number).reverse();
-        const components = geo.metaDataProperty.GeocoderMetaData.Address.Components;
+        const components =
+          geo.metaDataProperty.GeocoderMetaData.Address.Components;
 
         let city = components.find((c) => c.kind === "locality")?.name || "";
         let street = components.find((c) => c.kind === "street")?.name || "";
@@ -158,8 +163,15 @@ export default function GeoModal() {
       </Button>
 
       {isVisible && (
-        <div className={`geo-overlay ${isOpen ? "show" : ""}`} onClick={closeModal}>
-          <div className="geo-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
+        <div
+          className={`geo-overlay ${isOpen ? "show" : ""}`}
+          onClick={closeModal}
+        >
+          <div
+            className="geo-modal"
+            ref={modalRef}
+            onClick={(e) => e.stopPropagation()}
+          >
             <input
               type="text"
               placeholder="Поиск"
