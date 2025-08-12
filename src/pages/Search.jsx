@@ -10,6 +10,10 @@ export default function SearchP() {
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
 
+  const addProduct = () => {
+    
+  }
+
   // Отложенное обновление debouncedValue
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,7 +91,7 @@ export default function SearchP() {
                 />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button>
+                <button onClick={addProduct}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>

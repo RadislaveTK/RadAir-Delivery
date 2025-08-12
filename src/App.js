@@ -11,6 +11,7 @@ import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./stores/PrivateRoute";
 import LoginRoute from "./stores/LoginRoute";
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<LoginRoute element={<Register />} />}  />
         <Route path="/search" element={<PrivateRoute element={<Search />} />} />
         <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
+        <Route path="/cart" element={<PrivateRoute element={<Cart />} />} />
         <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
