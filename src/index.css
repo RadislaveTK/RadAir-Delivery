@@ -283,7 +283,7 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .bg-panel {
   position: absolute;
-  top: -5px;
+  top: -40px;
   right: -15%;
   width: 414px;
   height: 130px;
@@ -381,7 +381,7 @@ hr {
   width: 80vw;
   padding: 15px 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 20px;
   margin-top: 20px;
   overflow: auto;
