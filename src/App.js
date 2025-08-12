@@ -22,7 +22,8 @@ function App() {
         <Route path="/register" element={<LoginRoute element={<Register />} />}  />
         <Route path="/search" element={<PrivateRoute element={<Search />} />} />
         <Route path="/admin" element={<PrivateRoute element={<Admin />} />} />
-        <Route path="/cart" element={<PrivateRoute element={<Cart />} />} />
+        {/* <Route path="/cart" element={<PrivateRoute element={<Cart />} />} /> */}
+        <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<PrivateRoute element={<Profile />} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

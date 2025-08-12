@@ -103,7 +103,7 @@ export default function BurgerMenu() {
             </Link>
           </li>
           <li>
-            <Link to="/">
+            <Link to="/cart">
               <img
                 className="menu-img"
                 src="/assets/icons/basket.svg"
