@@ -107,8 +107,10 @@ export default function Cart() {
                   style={{
                     display: "flex",
                     flexDirection: "row",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                     alignItems: "center",
+                    width: "100%",
+                    padding: " 0 2px",
                   }}
                 >
                   <input
@@ -116,10 +118,22 @@ export default function Cart() {
                     checked={p.selected}
                     onChange={() => toggleSelectOne(p.id)}
                     className="check"
-                    style={{ marginBottom: "-5px" }}
                   />
-                  <button onClick={() => removeProduct(p.id)}>
-                    <img src="/assets/icons/delete.svg" alt="delete" />
+                  <button
+                    onClick={() => removeProduct(p.id)}
+                    style={{
+                      border: "none",
+                      background: "none",
+                      width: "30px",
+                      height: "30px",
+                    }}
+                  >
+                    <img
+                      src="/assets/icons/delete.svg"
+                      width="100%"
+                      height="100%"
+                      alt="delete"
+                    />
                   </button>
                 </div>
 
