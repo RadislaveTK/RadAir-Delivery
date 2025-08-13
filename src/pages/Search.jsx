@@ -13,7 +13,7 @@ export default function SearchP() {
   const [showNotification, setShowNotification] = useState(false);
 
   const addProduct = (product) => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
     const existing = cart.find((item) => item.id === product.id);
 
     if (existing) {
@@ -22,7 +22,7 @@ export default function SearchP() {
       cart.push({ ...product, count: 1 });
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem("cartProducts", JSON.stringify(cart));
 
     // Показ уведомления
     setShowNotification(true);
