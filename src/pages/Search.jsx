@@ -4,15 +4,32 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import CardProduct from "../components/CardProduct";
+import "../styles/SearchP.css";
 
 export default function SearchP() {
   const [value, setValue] = useState("");
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
 
-  const addProduct = () => {
-    
-  }
+  const addProduct = (product) => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.find((item) => item.id === product.id);
+
+    if (existing) {
+      existing.count = (existing.count || 1) + 1;
+    } else {
+      cart.push({ ...product, count: 1 });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    // Показ уведомления
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
+  };
 
   // Отложенное обновление debouncedValue
   useEffect(() => {
@@ -91,7 +108,7 @@ export default function SearchP() {
                 />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button onClick={addProduct}>
+                <button onClick={() => addProduct(p)}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>
@@ -100,6 +117,11 @@ export default function SearchP() {
           </div>
         </div>
       </Main>
+
+      {/* Уведомление */}
+      <div className={`notification ${showNotification ? "show" : ""}`}>
+        Товар добавлен в корзину
+      </div>
 
       <Fotter />
     </>

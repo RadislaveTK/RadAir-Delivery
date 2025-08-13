@@ -2,52 +2,34 @@ import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Cart() {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Товар 1",
-      producer: "Производитель",
-      price: 1500,
-      img: "example.jpg",
-      quantity: 1,
-      selected: false,
-    },
-    {
-      id: 2,
-      name: "Товар 2",
-      producer: "Производитель",
-      price: 2000,
-      img: "example2.jpg",
-      quantity: 1,
-      selected: false,
-    },
-    {
-      id: 3,
-      name: "Товар 2",
-      producer: "Производитель",
-      price: 2000,
-      img: "example2.jpg",
-      quantity: 1,
-      selected: false,
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
-  // Выбрать / снять выбор со всех
+  // Загружаем данные из localStorage при старте
+  useEffect(() => {
+    const storedProducts = localStorage.getItem("cartProducts");
+    if (storedProducts) setProducts(JSON.parse(storedProducts));
+  }, []);
+
+  // Сохраняем данные в localStorage при каждом изменении products
+  useEffect(() => {
+    if (products.length > 0) {
+      localStorage.setItem("cartProducts", JSON.stringify(products));
+    }
+  }, [products]);
+
   const toggleSelectAll = (checked) => {
     setProducts(products.map((p) => ({ ...p, selected: checked })));
   };
 
-  // Выбор одного товара
   const toggleSelectOne = (id) => {
     setProducts(
       products.map((p) => (p.id === id ? { ...p, selected: !p.selected } : p))
     );
   };
 
-  // Изменить количество
   const changeQuantity = (id, delta) => {
     setProducts(
       products.map((p) =>
@@ -56,7 +38,6 @@ export default function Cart() {
     );
   };
 
-  // Подсчёт итогов
   const selectedProducts = products.filter((p) => p.selected);
   const totalQuantity = selectedProducts.reduce(
     (sum, p) => sum + p.quantity,
@@ -80,7 +61,6 @@ export default function Cart() {
         </h1>
 
         <div className="block bl">
-          {/* Чекбокс "Выбрать все" */}
           <label className="check_l">
             <input
               type="checkbox"
@@ -101,11 +81,9 @@ export default function Cart() {
           </label>
           <hr />
 
-          {/* Список товаров */}
           <div className="card-products-cart">
             {products.map((p) => (
               <div key={p.id} className="card-product">
-                {/* Чекбокс выбора */}
                 <input
                   type="checkbox"
                   checked={p.selected}
@@ -114,13 +92,11 @@ export default function Cart() {
                   style={{ width: "18px", height: "18px" }}
                 />
 
-                {/* Изображение */}
                 <img
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
                   alt={p.name}
                 />
 
-                {/* Инфо */}
                 <div
                   style={{
                     display: "flex",
@@ -132,7 +108,6 @@ export default function Cart() {
                   <p>{p.producer}</p>
                 </div>
 
-                {/* Счётчик */}
                 <div className="card-pr-b">
                   <button onClick={() => changeQuantity(p.id, -1)}>-</button>
                   <span>{p.quantity}</span>
@@ -143,7 +118,6 @@ export default function Cart() {
           </div>
         </div>
 
-        {/* Итог */}
         <div
           style={{
             display: "flex",
