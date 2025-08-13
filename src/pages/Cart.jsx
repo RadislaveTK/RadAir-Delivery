@@ -3,9 +3,11 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import { useState, useEffect } from "react";
+import "../styles/SearchP.css";
 
 export default function Cart() {
   const [products, setProducts] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
 
   // Загружаем данные из localStorage при старте
   useEffect(() => {
@@ -47,6 +49,26 @@ export default function Cart() {
 
   const allSelected = products.length > 0 && products.every((p) => p.selected);
 
+  const removeProduct = (id) => {
+    // Получаем текущую корзину
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Фильтруем, убирая товар с нужным id
+    const updatedCart = cart.filter((item) => item.id !== id);
+
+    // Сохраняем в LocalStorage
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    // Обновляем state, если он у тебя есть для отображения корзины
+    setProducts(updatedCart);
+
+    // Можно показать уведомление
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
+  };
+
   return (
     <>
       <Header />
@@ -81,13 +103,25 @@ export default function Cart() {
           <div className="card-products-cart">
             {products.map((p) => (
               <div key={p.id} className="card-product">
-                <input
-                  type="checkbox"
-                  checked={p.selected}
-                  onChange={() => toggleSelectOne(p.id)}
-                  className="check"
-                  style={{ marginBottom: "-5px" }}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={p.selected}
+                    onChange={() => toggleSelectOne(p.id)}
+                    className="check"
+                    style={{ marginBottom: "-5px" }}
+                  />
+                  <button onClick={() => removeProduct(p.id)}>
+                    <img src="/assets/icons/delete.svg" alt="delete" />
+                  </button>
+                </div>
 
                 <img
                   src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
@@ -140,6 +174,10 @@ export default function Cart() {
           </span>
         </div>
       </Main>
+
+      <div className={`notification ${showNotification ? "show" : ""}`}>
+        Товар удален из корзины
+      </div>
 
       <Fotter />
     </>
