@@ -39,10 +39,7 @@ export default function Cart() {
   };
 
   const selectedProducts = products.filter((p) => p.selected);
-  const totalQuantity = selectedProducts.reduce(
-    (sum, p) => sum + p.count,
-    0
-  );
+  const totalQuantity = selectedProducts.reduce((sum, p) => sum + p.count, 0);
   const totalPrice = selectedProducts.reduce(
     (sum, p) => sum + p.count * p.price,
     0
@@ -89,7 +86,7 @@ export default function Cart() {
                   checked={p.selected}
                   onChange={() => toggleSelectOne(p.id)}
                   className="check"
-                  style={{ width: "18px", height: "18px" }}
+                  style={{ marginBottom: "-5px" }}
                 />
 
                 <img
