@@ -51,13 +51,13 @@ export default function Cart() {
 
   const removeProduct = (id) => {
     // Получаем текущую корзину
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
 
     // Фильтруем, убирая товар с нужным id
     const updatedCart = cart.filter((item) => item.id !== id);
 
     // Сохраняем в LocalStorage
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    localStorage.setItem("cartProducts", JSON.stringify(updatedCart));
 
     // Обновляем state, если он у тебя есть для отображения корзины
     setProducts(updatedCart);
