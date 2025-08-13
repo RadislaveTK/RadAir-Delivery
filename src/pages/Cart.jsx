@@ -33,18 +33,18 @@ export default function Cart() {
   const changeQuantity = (id, delta) => {
     setProducts(
       products.map((p) =>
-        p.id === id ? { ...p, quantity: Math.max(1, p.quantity + delta) } : p
+        p.id === id ? { ...p, count: Math.max(1, p.count + delta) } : p
       )
     );
   };
 
   const selectedProducts = products.filter((p) => p.selected);
   const totalQuantity = selectedProducts.reduce(
-    (sum, p) => sum + p.quantity,
+    (sum, p) => sum + p.count,
     0
   );
   const totalPrice = selectedProducts.reduce(
-    (sum, p) => sum + p.quantity * p.price,
+    (sum, p) => sum + p.count * p.price,
     0
   );
 
@@ -110,7 +110,7 @@ export default function Cart() {
 
                 <div className="card-pr-b">
                   <button onClick={() => changeQuantity(p.id, -1)}>-</button>
-                  <span>{p.quantity}</span>
+                  <span>{p.count}</span>
                   <button onClick={() => changeQuantity(p.id, 1)}>+</button>
                 </div>
               </div>
