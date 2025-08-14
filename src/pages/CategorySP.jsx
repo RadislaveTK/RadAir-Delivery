@@ -68,9 +68,27 @@ export default function CategorySP({ category }) {
       <Header />
       <BgDop />
       <Main>
-        {category === "fastfood" ? <h1 className="heading">Фаст-Фуд</h1> : ""}
-        {category === "products" ? <h1 className="heading">Продукты</h1> : ""}
-        {category === "restouran" ? <h1 className="heading">Ресторан</h1> : ""}
+        {category === "fastfood" ? (
+          <h1 className="heading" style={{ marginBottom: "20px" }}>
+            Фаст-Фуд
+          </h1>
+        ) : (
+          ""
+        )}
+        {category === "products" ? (
+          <h1 className="heading" style={{ marginBottom: "20px" }}>
+            Продукты
+          </h1>
+        ) : (
+          ""
+        )}
+        {category === "restouran" ? (
+          <h1 className="heading" style={{ marginBottom: "20px" }}>
+            Ресторан
+          </h1>
+        ) : (
+          ""
+        )}
         <div className="block bl">
           <div
             style={{
