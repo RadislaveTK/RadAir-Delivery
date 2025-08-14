@@ -421,10 +421,9 @@ hr {
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;
-  /* Текст в одну строку */
   overflow: hidden;
-  /* Скрыть лишний текст */
   text-overflow: ellipsis;
+  width: 100%;
 }
 
 .bl {
