@@ -69,9 +69,19 @@ export default function CategorySP({ category }) {
       <BgDop />
       <h1 className="heading">Фаст-Фуд</h1>
       <Main>
-        <div className="block">
-          <div>
-            <div className="search">
+        <div className="block bl">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "10px",
+            }}
+          >
+            <div
+              className="search"
+              style={{ width: "80%", marginBottom: "10px", height: "80%," }}
+            >
               <label htmlFor="inp_search">
                 <img src="/assets/icons/search.svg" alt="search" />
               </label>
