@@ -236,6 +236,7 @@ main {
   padding: 0 10px 0 45px;
   box-shadow: 2px 2px 0px 0px rgba(255, 152, 0, 1),
     4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  transition: all 0.5s linear;
 }
 
 #inp_search:focus-visible,
