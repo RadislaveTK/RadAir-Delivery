@@ -494,11 +494,6 @@ hr {
   display: flex;
   justify-content: center;
   position: relative;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
 }
 
 .card-product > input {
@@ -517,6 +512,11 @@ hr {
   font-size: 16px;
   margin-top: 0;
   font-weight: bold;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .card-pr-b {
