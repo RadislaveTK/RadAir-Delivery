@@ -138,7 +138,7 @@ export default function Cart() {
                 </div>
 
                 <img
-                  src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
+                  src={p.img}
                   alt={p.name}
                 />
 
