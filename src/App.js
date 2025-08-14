@@ -36,6 +36,14 @@ function App() {
           path="/fastfood"
           element={<CategorySP category="fastfood" />}
         />
+        <Route
+          path="/restouran"
+          element={<CategorySP category="restouran" />}
+        />
+        <Route
+          path="/products"
+          element={<CategorySP category="products" />}
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

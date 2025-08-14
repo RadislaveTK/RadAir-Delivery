@@ -21,15 +21,15 @@ export default function Home() {
             <br />и начните заказ прямо сейчас.
           </p>
           <div className="card-container">
-            <Card style={{ gridArea: "ff" }}>
+            <Card url="/fastfood" style={{ gridArea: "ff" }}>
               <img src="/assets/product/fastfood.png" alt="Icon"/>
               Фаст-Фуд
             </Card>
-            <Card style={{ gridArea: "rr" }}>
+            <Card url="/restouran" style={{ gridArea: "rr" }}>
               <img src="/assets/product/restouran.png" alt="Icon"/>
               Ресторан
             </Card>
-            <Card style={{ gridArea: "pt", fontSize: "20px" }}>
+            <Card url="/products" style={{ gridArea: "pt", fontSize: "20px" }}>
               <img src="/assets/product/products.png" alt="Icon"/>
               Продукты
             </Card>
