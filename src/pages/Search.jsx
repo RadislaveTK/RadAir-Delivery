@@ -103,7 +103,7 @@ export default function SearchP() {
             {products.map((p) => (
               <CardProduct key={p.id} style={{ height: "220px" }}>
                 <img
-                  src={`https://radair-delivery-back-production-21b4.up.railway.app/storage/${p.img}`}
+                  src={p.img}
                   alt={p.name}
                 />
                 <h3>{p.name}</h3>
