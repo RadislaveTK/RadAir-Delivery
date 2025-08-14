@@ -149,7 +149,7 @@ export default function Cart() {
                     alignItems: "center",
                   }}
                 >
-                  <h3>{p.name}</h3>
+                  <h3 className="t-o">{p.name}</h3>
                   <p>{p.producer}</p>
                 </div>
 
