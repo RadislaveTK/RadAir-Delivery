@@ -23,6 +23,10 @@ export default function GeoModal() {
   const touchStartYRef = useRef(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
 
+  //  useEffect(()=>{
+  //   setAddress()
+  //  },[markerCoords]);
+
   // Получение координат из cookie
   useEffect(() => {
     const cord = Cookies.get("cords");
@@ -75,7 +79,7 @@ export default function GeoModal() {
         let house = components.find((comp) => comp.kind === "house")?.name || '';
 
         // Формируем строку адреса
-        const formattedAddress = `${street} ${house}`.trim();
+        const formattedAddress = `${city}, ${street} ${house}`.trim();
 
         return {
           name: geo.name,
@@ -91,15 +95,14 @@ export default function GeoModal() {
     }
   };
 
-
-
-
   const handleSuggestionSelect = (item) => {
     setShouldFetch(false);
     setSearchText(`${item.name}`);
     setSuggestions([]);
     setMarkerCoords(item.coords);
-    setAddress(`${item.formattedAddress}`);
+    setAddress(`${item.name}`);    
+    console.log(`${item.name}`);
+    
   };
 
   // Подсказки
@@ -130,9 +133,6 @@ export default function GeoModal() {
     mapInstanceRef.current.setCenter(markerCoords);
     placemarkRef.current.geometry.setCoordinates(markerCoords);
   }, [markerCoords]);
-
-
-
 
   // Инициализация карты
   useEffect(() => {
@@ -206,7 +206,7 @@ export default function GeoModal() {
         }
       });
     });
-  }, [markerCoords]);
+  }, [markerCoords, setAddress]);
 
   // Свайп вниз для закрытия
   const handleTouchStart = (e) => {
@@ -270,7 +270,7 @@ export default function GeoModal() {
                 setShouldFetch(true);
               }}
               onKeyDown={(e) => {
-                if (e.code == "Enter") {
+                if (e.code === "Enter") {
                   console.log(e);
                   setSearchText(e.target.value);
                   setShouldFetch(true);
