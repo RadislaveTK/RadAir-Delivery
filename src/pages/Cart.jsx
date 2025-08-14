@@ -147,6 +147,7 @@ export default function Cart() {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    width: "100%",
                   }}
                 >
                   <h3 className="t-o">{p.name}</h3>
