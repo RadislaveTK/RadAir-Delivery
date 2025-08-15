@@ -12,9 +12,9 @@ export default function SearchP() {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
 
-  const [page, setPage] = useState(1); // текущая страница
-  const [hasMore, setHasMore] = useState(true); // есть ли ещё данные
-  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const perPage = 12;
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -34,28 +34,31 @@ export default function SearchP() {
     }, 2000);
   };
 
-  // Дебаунс поиска
   useEffect(() => {
     const timer = setTimeout(() => {
-      setProducts([]);
-      setPage(1);
-      setHasMore(true);
       setDebouncedValue(value.trim());
+      setPage(1); // сброс страницы при новом поиске
+      setProducts([]);
+      setHasMore(true);
     }, 700);
 
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Функция загрузки данных
-  const fetchProducts = (pageNum, append = false) => {
-    if (isLoading || !hasMore) return;
+  const loadProducts = () => {
+    if (!hasMore) return;
 
-    setIsLoading(true);
-    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${pageNum}`;
+    let url =
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
 
+    const params = new URLSearchParams();
     if (debouncedValue !== "") {
-      url += `&name=${encodeURIComponent(debouncedValue)}`;
+      params.append("name", debouncedValue);
     }
+    params.append("page", page);
+    params.append("perPage", perPage);
+
+    url += `?${params.toString()}`;
 
     fetch(url)
       .then((res) => {
@@ -65,47 +68,32 @@ export default function SearchP() {
         return res.json();
       })
       .then((data) => {
-        const newItems = data.data || data; // paginate возвращает data[]
-        setProducts((prev) => (append ? [...prev, ...newItems] : newItems));
-
-        // Проверяем, есть ли ещё страницы
-        if (data.current_page >= data.last_page) {
+        if (data.length < perPage) {
           setHasMore(false);
         }
+        setProducts((prev) => [...prev, ...data]); // добавляем, а не заменяем
       })
       .catch((err) => {
         console.error("Ошибка:", err);
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
   };
 
-  // Загружаем первую страницу при изменении поиска
   useEffect(() => {
-    if (debouncedValue !== "" || value === "") {
-      fetchProducts(1, false);
-    }
-  }, [debouncedValue]);
+    loadProducts();
+  }, [debouncedValue, page]);
 
-  // Обработчик скролла
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop + 200 >=
-        document.documentElement.scrollHeight
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 200
       ) {
-        if (hasMore && !isLoading) {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchProducts(nextPage, true);
-        }
+        setPage((prev) => prev + 1);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, hasMore, isLoading]);
+  }, []);
 
   return (
     <>
@@ -155,9 +143,6 @@ export default function SearchP() {
               </CardProduct>
             ))}
           </div>
-
-          {isLoading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
-          {!hasMore && <p style={{ textAlign: "center" }}>Больше товаров нет</p>}
         </div>
       </Main>
 
