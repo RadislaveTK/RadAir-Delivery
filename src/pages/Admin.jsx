@@ -3,6 +3,7 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import { useState } from "react";
+import Cookies from "js-cookie";
 
 export default function Admin() {
   const [form, setForm] = useState({
