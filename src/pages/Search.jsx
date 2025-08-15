@@ -49,7 +49,7 @@ export default function SearchP() {
         if (!res.ok) throw new Error("Ошибка при получении данных");
         return res.json();
       })
-      .then((data) => setProducts(data))
+      .then((data) => setProducts(data.data))
       .catch((err) => console.error("Ошибка:", err));
   }, [debouncedValue]);
 
