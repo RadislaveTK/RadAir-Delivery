@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -11,7 +11,6 @@ export default function SearchP() {
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
-  const cardProductsRef = useRef(null); // 🔹 ссылка на блок
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -25,67 +24,51 @@ export default function SearchP() {
 
     localStorage.setItem("cartProducts", JSON.stringify(cart));
 
+    // Показ уведомления
     setShowNotification(true);
     setTimeout(() => {
       setShowNotification(false);
     }, 2000);
   };
 
+  // Отложенное обновление debouncedValue
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
     }, 700);
+
     return () => clearTimeout(timer);
   }, [value]);
 
+  // Один универсальный запрос
   useEffect(() => {
     let url =
       "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
+
     if (debouncedValue !== "") {
       url += `?name=${encodeURIComponent(debouncedValue)}`;
     }
+
     fetch(url)
       .then((res) => {
-        if (!res.ok) throw new Error("Ошибка при получении данных");
+        if (!res.ok) {
+          throw new Error("Ошибка при получении данных");
+        }
         return res.json();
       })
-      .then((data) => setProducts(data.data))
-      .catch((err) => console.error("Ошибка:", err));
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      });
   }, [debouncedValue]);
-
-  // 🔹 Логика отслеживания 85% скролла
-  useEffect(() => {
-    const handleScroll = () => {
-      const el = cardProductsRef.current;
-      if (!el) return;
-
-      const scrollTop = el.scrollTop; // сколько прокрутили
-      const scrollHeight = el.scrollHeight; // общая высота
-      const clientHeight = el.clientHeight; // видимая область
-
-      const scrolledPercent = (scrollTop + clientHeight) / scrollHeight * 100;
-
-      if (scrolledPercent == 85) {
-        console.log("aaa");
-      }
-    };
-
-    const el = cardProductsRef.current;
-    if (el) {
-      el.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (el) {
-        el.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
 
   return (
     <>
       <Header />
       <BgDop />
+
       <Main>
         <div className="search">
           <label htmlFor="inp_search">
@@ -116,11 +99,13 @@ export default function SearchP() {
             <hr />
           </div>
 
-          {/* 🔹 Добавили ref */}
-          <div className="card-products" ref={cardProductsRef} style={{ overflowY: "auto", maxHeight: "400px" }}>
+          <div className="card-products">
             {products.map((p) => (
               <CardProduct key={p.id} style={{ height: "220px" }}>
-                <img src={p.img} alt={p.name} />
+                <img
+                  src={p.img}
+                  alt={p.name}
+                />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
                 <button onClick={() => addProduct(p)}>
@@ -133,6 +118,7 @@ export default function SearchP() {
         </div>
       </Main>
 
+      {/* Уведомление */}
       <div className={`notification ${showNotification ? "show" : ""}`}>
         Товар добавлен в корзину
       </div>

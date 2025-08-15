@@ -35,7 +35,7 @@ export default function Admin() {
 
     try {
       fetch(
-        `https://radair-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
+        `https://radel-delivery-back-production-21b4.up.railway.app/sanctum/csrf-cookie`,
         {
           method: "get",
           credentials: "include",
@@ -45,6 +45,7 @@ export default function Admin() {
         "https://radair-delivery-back-production-21b4.up.railway.app/api/product/create_product",
         {
           method: "POST",
+          "X-XSRF-TOKEN": decodeURIComponent(Cookies.get("XSRF-TOKEN")),
           body: fd, // не ставим Content-Type, fetch сам проставит multipart/form-data
         }
       );
