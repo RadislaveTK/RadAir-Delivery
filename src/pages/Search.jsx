@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -12,6 +12,13 @@ export default function SearchP() {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const loaderRef = useRef(null);
+
+  const perPage = 12;
+
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
     const existing = cart.find((item) => item.id === product.id);
@@ -24,51 +31,74 @@ export default function SearchP() {
 
     localStorage.setItem("cartProducts", JSON.stringify(cart));
 
-    // Показ уведомления
     setShowNotification(true);
-    setTimeout(() => {
-      setShowNotification(false);
-    }, 2000);
+    setTimeout(() => setShowNotification(false), 2000);
   };
 
-  // Отложенное обновление debouncedValue
+  // Дебаунс поиска
   useEffect(() => {
     const timer = setTimeout(() => {
+      setProducts([]);
+      setPage(1);
+      setHasMore(true);
       setDebouncedValue(value.trim());
     }, 700);
 
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Один универсальный запрос
-  useEffect(() => {
-    let url =
-      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
+  // Загрузка данных
+  const fetchProducts = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
 
+    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${page}&per_page=${perPage}`;
     if (debouncedValue !== "") {
-      url += `?name=${encodeURIComponent(debouncedValue)}`;
+      url += `&name=${encodeURIComponent(debouncedValue)}`;
     }
 
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Ошибка при получении данных");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((err) => {
-        console.error("Ошибка:", err);
-      });
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Ошибка при получении данных");
+
+      const data = await res.json();
+      setProducts((prev) => [...prev, ...data.data]);
+      setHasMore(data.current_page < data.last_page);
+      setPage((prev) => prev + 1);
+    } catch (err) {
+      console.error("Ошибка:", err);
+    }
+
+    setLoading(false);
+  };
+
+  // Загрузка первой страницы
+  useEffect(() => {
+    fetchProducts();
   }, [debouncedValue]);
+
+  // Intersection Observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchProducts();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+
+    return () => {
+      if (loaderRef.current) observer.unobserve(loaderRef.current);
+    };
+  }, [loaderRef.current, debouncedValue]);
 
   return (
     <>
       <Header />
       <BgDop />
-
       <Main>
         <div className="search">
           <label htmlFor="inp_search">
@@ -102,10 +132,7 @@ export default function SearchP() {
           <div className="card-products">
             {products.map((p) => (
               <CardProduct key={p.id} style={{ height: "220px" }}>
-                <img
-                  src={p.img}
-                  alt={p.name}
-                />
+                <img src={p.img} alt={p.name} />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
                 <button onClick={() => addProduct(p)}>
@@ -115,14 +142,15 @@ export default function SearchP() {
               </CardProduct>
             ))}
           </div>
+
+          {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
+          <div ref={loaderRef} style={{ height: "20px" }}></div>
         </div>
       </Main>
 
-      {/* Уведомление */}
       <div className={`notification ${showNotification ? "show" : ""}`}>
         Товар добавлен в корзину
       </div>
-
       <Fotter />
     </>
   );
