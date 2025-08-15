@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -12,12 +12,9 @@ export default function SearchP() {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
 
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const loaderRef = useRef(null);
-
-  const perPage = 12;
+  const [page, setPage] = useState(1); // текущая страница
+  const [hasMore, setHasMore] = useState(true); // есть ли ещё данные
+  const [isLoading, setIsLoading] = useState(false);
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -32,7 +29,9 @@ export default function SearchP() {
     localStorage.setItem("cartProducts", JSON.stringify(cart));
 
     setShowNotification(true);
-    setTimeout(() => setShowNotification(false), 2000);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
   };
 
   // Дебаунс поиска
@@ -47,58 +46,72 @@ export default function SearchP() {
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Загрузка данных
-  const fetchProducts = async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
+  // Функция загрузки данных
+  const fetchProducts = (pageNum, append = false) => {
+    if (isLoading || !hasMore) return;
 
-    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${page}&per_page=${perPage}`;
+    setIsLoading(true);
+    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${pageNum}`;
+
     if (debouncedValue !== "") {
       url += `&name=${encodeURIComponent(debouncedValue)}`;
     }
 
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Ошибка при получении данных");
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Ошибка при получении данных");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const newItems = data.data || data; // paginate возвращает data[]
+        setProducts((prev) => (append ? [...prev, ...newItems] : newItems));
 
-      const data = await res.json();
-      setProducts((prev) => [...prev, ...data.data]);
-      setHasMore(data.current_page < data.last_page);
-      setPage((prev) => prev + 1);
-    } catch (err) {
-      console.error("Ошибка:", err);
-    }
-
-    setLoading(false);
+        // Проверяем, есть ли ещё страницы
+        if (data.current_page >= data.last_page) {
+          setHasMore(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Ошибка:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-  // Загрузка первой страницы
+  // Загружаем первую страницу при изменении поиска
   useEffect(() => {
-    fetchProducts();
+    if (debouncedValue !== "" || value === "") {
+      fetchProducts(1, false);
+    }
   }, [debouncedValue]);
 
-  // Intersection Observer
+  // Обработчик скролла
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchProducts();
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 200 >=
+        document.documentElement.scrollHeight
+      ) {
+        if (hasMore && !isLoading) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          fetchProducts(nextPage, true);
         }
-      },
-      { threshold: 1 }
-    );
-
-    if (loaderRef.current) observer.observe(loaderRef.current);
-
-    return () => {
-      if (loaderRef.current) observer.unobserve(loaderRef.current);
+      }
     };
-  }, [loaderRef.current, debouncedValue]);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [page, hasMore, isLoading]);
 
   return (
     <>
       <Header />
       <BgDop />
+
       <Main>
         <div className="search">
           <label htmlFor="inp_search">
@@ -143,14 +156,15 @@ export default function SearchP() {
             ))}
           </div>
 
-          {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
-          <div ref={loaderRef} style={{ height: "20px" }}></div>
+          {isLoading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
+          {!hasMore && <p style={{ textAlign: "center" }}>Больше товаров нет</p>}
         </div>
       </Main>
 
       <div className={`notification ${showNotification ? "show" : ""}`}>
         Товар добавлен в корзину
       </div>
+
       <Fotter />
     </>
   );
