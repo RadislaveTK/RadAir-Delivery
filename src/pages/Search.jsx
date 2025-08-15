@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -11,9 +11,7 @@ export default function SearchP() {
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
-
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const cardProductsRef = useRef(null); // 🔹 ссылка на блок
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -33,65 +31,61 @@ export default function SearchP() {
     }, 2000);
   };
 
-  // debounce для поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
-      setPage(1); 
-      setProducts([]); 
-      setHasMore(true);
     }, 700);
-
     return () => clearTimeout(timer);
   }, [value]);
 
-  const loadProducts = () => {
-    if (!hasMore) return;
-
-    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${page}`;
+  useEffect(() => {
+    let url =
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
     if (debouncedValue !== "") {
-      url += `&name=${encodeURIComponent(debouncedValue)}`;
+      url += `?name=${encodeURIComponent(debouncedValue)}`;
     }
-
     fetch(url)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Ошибка при получении данных");
-        }
+        if (!res.ok) throw new Error("Ошибка при получении данных");
         return res.json();
       })
-      .then((data) => {
-        const newProducts = data.data || [];
-        setProducts((prev) => [...prev, ...newProducts]);
-        setHasMore(data.next_page_url !== null);
-      })
-      .catch((err) => {
-        console.error("Ошибка:", err);
-      });
-  };
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Ошибка:", err));
+  }, [debouncedValue]);
 
-  useEffect(() => {
-    loadProducts();
-  }, [debouncedValue, page]);
-
+  // 🔹 Логика отслеживания 85% скролла
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 200
-      ) {
-        setPage((prev) => prev + 1);
+      const el = cardProductsRef.current;
+      if (!el) return;
+
+      const scrollTop = el.scrollTop; // сколько прокрутили
+      const scrollHeight = el.scrollHeight; // общая высота
+      const clientHeight = el.clientHeight; // видимая область
+
+      const scrolledPercent = (scrollTop + clientHeight) / scrollHeight * 100;
+
+      if (scrolledPercent >= 85) {
+        console.log("aaa");
       }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const el = cardProductsRef.current;
+    if (el) {
+      el.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (el) {
+        el.removeEventListener("scroll", handleScroll);
+      }
+    };
   }, []);
 
   return (
     <>
       <Header />
       <BgDop />
-
       <Main>
         <div className="search">
           <label htmlFor="inp_search">
@@ -122,7 +116,8 @@ export default function SearchP() {
             <hr />
           </div>
 
-          <div className="card-products">
+          {/* 🔹 Добавили ref */}
+          <div className="card-products" ref={cardProductsRef} style={{ overflowY: "auto", maxHeight: "400px" }}>
             {products.map((p) => (
               <CardProduct key={p.id} style={{ height: "220px" }}>
                 <img src={p.img} alt={p.name} />
