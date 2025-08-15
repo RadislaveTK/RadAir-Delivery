@@ -65,7 +65,7 @@ export default function SearchP() {
 
       const scrolledPercent = (scrollTop + clientHeight) / scrollHeight * 100;
 
-      if (scrolledPercent >= 85) {
+      if (scrolledPercent == 85) {
         console.log("aaa");
       }
     };
