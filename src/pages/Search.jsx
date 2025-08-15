@@ -14,7 +14,6 @@ export default function SearchP() {
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const perPage = 12;
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -34,11 +33,12 @@ export default function SearchP() {
     }, 2000);
   };
 
+  // debounce для поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
-      setPage(1); // сброс страницы при новом поиске
-      setProducts([]);
+      setPage(1); 
+      setProducts([]); 
       setHasMore(true);
     }, 700);
 
@@ -48,17 +48,10 @@ export default function SearchP() {
   const loadProducts = () => {
     if (!hasMore) return;
 
-    let url =
-      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
-
-    const params = new URLSearchParams();
+    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=${page}`;
     if (debouncedValue !== "") {
-      params.append("name", debouncedValue);
+      url += `&name=${encodeURIComponent(debouncedValue)}`;
     }
-    params.append("page", page);
-    params.append("perPage", perPage);
-
-    url += `?${params.toString()}`;
 
     fetch(url)
       .then((res) => {
@@ -68,10 +61,9 @@ export default function SearchP() {
         return res.json();
       })
       .then((data) => {
-        if (data.length < perPage) {
-          setHasMore(false);
-        }
-        setProducts((prev) => [...prev, ...data]); // добавляем, а не заменяем
+        const newProducts = data.data || [];
+        setProducts((prev) => [...prev, ...newProducts]);
+        setHasMore(data.next_page_url !== null);
       })
       .catch((err) => {
         console.error("Ошибка:", err);
