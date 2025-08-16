@@ -49,16 +49,24 @@ export default function SearchP() {
     let url =
       "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
     const params = [];
-    if (debouncedValue) params.push(`name=${encodeURIComponent(debouncedValue)}`);
+    if (debouncedValue)
+      params.push(`name=${encodeURIComponent(debouncedValue)}`);
     params.push(`page=1`);
     url += "?" + params.join("&");
 
     setLoading(true);
     fetch(url)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Ошибка загрузки");
+        return res.json();
+      })
       .then((data) => {
         setProducts(data.data);
         setNextPageUrl(data.next_page_url);
+      })
+      .catch((err) => {
+        console.error(err);
+        setProducts([]); // очищаем товары если ошибка
       })
       .finally(() => setLoading(false));
   }, [debouncedValue]);
@@ -69,12 +77,21 @@ export default function SearchP() {
     if (!nextPageUrl) return;
 
     setLoading(true);
-    fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page="+page)
-      .then((res) => res.json())
+    fetch(
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=" +
+        page
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error("Ошибка загрузки");
+        return res.json();
+      })
       .then((data) => {
         setProducts((prev) => [...prev, ...data.data]);
         setNextPageUrl(data.next_page_url);
-        
+      })
+      .catch((err) => {
+        console.error(err);
+        setProducts([]); // очищаем товары если ошибка
       })
       .finally(() => setLoading(false));
   }, [page]);
@@ -83,8 +100,9 @@ export default function SearchP() {
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
+
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 50) {
+      if (scrollTop + clientHeight >= scrollHeight - 40) {
         if (nextPageUrl && !loading) {
           setPage((prev) => prev + 1);
         }
@@ -151,6 +169,9 @@ export default function SearchP() {
                 </button>
               </CardProduct>
             ))}
+            {!loading && products.length === 0 && (
+              <p style={{ textAlign: "center" }}>Ничего не найдено</p>
+            )}
             {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
           </div>
         </div>
