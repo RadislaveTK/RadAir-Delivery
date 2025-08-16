@@ -24,9 +24,9 @@ export default function CardProduct({ product, children, ...props }) {
             </button>
             <img src={product.img} alt={product.name} className="modal-img" />
             <h2>{product.name}</h2>
+            <p><b>Описание:</b> {product.desc}</p>
             <p><b>Производитель:</b> {product.producer}</p>
             <p><b>Страна:</b> {product.country}</p>
-            <p><b>Описание:</b> {product.desc}</p>
             <p><b>Цена:</b> {product.price} тг</p>
           </div>
         </div>
