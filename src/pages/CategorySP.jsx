@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
@@ -11,6 +11,12 @@ export default function CategorySP({ category }) {
   const [products, setProducts] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
   const [showNotification, setShowNotification] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [nextPageUrl, setNextPageUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const containerRef = useRef(null);
 
   const addProduct = (product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts")) || [];
@@ -40,28 +46,95 @@ export default function CategorySP({ category }) {
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Один универсальный запрос
   useEffect(() => {
+    if (debouncedValue === "" && page !== 1) return; // предотвращаем двойной вызов
+
     let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?category=${category}`;
+    const params = [];
+    if (debouncedValue)
+      params.push(`name=${encodeURIComponent(debouncedValue)}`);
+    params.push(`page=1`);
+    url += "&" + params.join("&");
 
-    if (debouncedValue !== "") {
-      url += `&name=${encodeURIComponent(debouncedValue)}`;
-    }
-
+    setLoading(true);
     fetch(url)
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Ошибка при получении данных");
-        }
+        if (!res.ok) throw new Error("Ошибка загрузки");
         return res.json();
       })
       .then((data) => {
-        setProducts(data);
+        setProducts(data.data);
+        setNextPageUrl(data.next_page_url);
       })
       .catch((err) => {
-        console.error("Ошибка:", err);
-      });
+        console.error(err);
+        setProducts([]); // очищаем товары если ошибка
+      })
+      .finally(() => setLoading(false));
   }, [debouncedValue]);
+
+  // Загружаем следующую страницу при изменении page
+  useEffect(() => {
+    if (page === 1) return; // первая страница уже загружена
+    if (!nextPageUrl) return;
+
+    setLoading(true);
+    let url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?category=${category}`;
+    const params = [];
+    if (debouncedValue)
+      params.push(`name=${encodeURIComponent(debouncedValue)}`);
+    params.push("page=" + page);
+    url += "&" + params.join("&");
+
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error("Ошибка загрузки");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts((prev) => [...prev, ...data.data]);
+        setNextPageUrl(data.next_page_url);
+      })
+      .catch((err) => {
+        console.error(err);
+        setProducts([]); // очищаем товары если ошибка
+      })
+      .finally(() => setLoading(false));
+  }, [page]);
+
+  // Ловим скролл внутри контейнера
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 40) {
+        if (nextPageUrl && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      }
+    };
+    const container = containerRef.current;
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [nextPageUrl, loading]);
+
+  // Ловим скролл внутри контейнера
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 40) {
+        if (nextPageUrl && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      }
+    };
+    const container = containerRef.current;
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [nextPageUrl, loading]);
 
   return (
     <>
@@ -117,21 +190,30 @@ export default function CategorySP({ category }) {
             <hr />
           </div>
 
-          <div className="card-products">
+          <div className="card-products" ref={containerRef} style={{
+              maxHeight: "70vh",
+              overflowY: "auto",
+              padding: "10px",
+            }}>
             {products.map((p) => (
-              <CardProduct key={p.id} style={{ height: "220px" }}>
-                <img
-                  src={p.img}
-                  alt={p.name}
-                />
+              <CardProduct key={p.id} style={{ height: "220px" }} product={p} addProduct={addProduct}>
+                <img src={p.img} alt={p.name} />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button onClick={() => addProduct(p)}>
+                <button onClick={(e) => { e.stopPropagation(); addProduct(p); }}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>
               </CardProduct>
             ))}
+            {!loading && products.length === 0 && (
+              <p style={{ textAlign: "center", width: "150px" }}>
+                Ничего не найдено
+              </p>
+            )}
+            {loading && (
+              <p style={{ textAlign: "center", width: "150px" }}>Загрузка...</p>
+            )}
           </div>
         </div>
       </Main>
