@@ -77,13 +77,13 @@ export default function SearchP() {
     if (!nextPageUrl) return;
 
     setLoading(true);
-    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=";
+    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
     const params = [];
     if (debouncedValue)
       params.push(`name=${encodeURIComponent(debouncedValue)}`);
     params.push('page='+page);
     url += "?" + params.join("&");
-    
+
     fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Ошибка загрузки");
