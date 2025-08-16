@@ -69,7 +69,7 @@ export default function SearchP() {
     if (!nextPageUrl) return;
 
     setLoading(true);
-    fetch(nextPageUrl)
+    fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/"+nextPageUrl)
       .then((res) => res.json())
       .then((data) => {
         setProducts((prev) => [...prev, ...data.data]);
