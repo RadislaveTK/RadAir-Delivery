@@ -158,7 +158,6 @@ export default function SearchP() {
             style={{
               maxHeight: "70vh",
               overflowY: "auto",
-              border: "1px solid #ddd",
               padding: "10px",
             }}
           >

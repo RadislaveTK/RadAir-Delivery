@@ -22,7 +22,7 @@ export default function CardProduct({ product, addProduct, children, ...props })
             <span className="modal-close" onClick={closeModal}>
               <img src="/assets/icons/close.svg" width={30} height={30} alt="close" />
             </span>
-            <img width="100%" src={product.img} alt={product.name} className="modal-img" />
+            <img style={{ width: "100%", }} src={product.img} alt={product.name} className="modal-img" />
             <h2 style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", marginBottom: "20px", }}>{product.name}</h2>
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Описание:</b> {product.desc}</p>
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Производитель:</b> {product.producer}</p>
