@@ -163,11 +163,11 @@ export default function SearchP() {
             }}
           >
             {products.map((p) => (
-              <CardProduct key={p.id} style={{ height: "220px" }}>
+              <CardProduct key={p.id} style={{ height: "220px" }} product={p}>
                 <img src={p.img} alt={p.name} />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button onClick={() => addProduct(p)}>
+                <button onClick={(e) => { e.stopPropagation(); addProduct(p); }}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>
