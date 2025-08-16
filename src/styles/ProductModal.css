@@ -69,6 +69,26 @@ p {
 margin-top: 100px;
 }
 
+.modal-content >button {
+    background: #963736;
+    color: #f7f6f3;
+    display: flex;
+    font-size: 15px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    border-radius: 5px;
+    padding: 5px 0px;
+    font-weight: 500;
+}
+
+.modal-content >button>img {
+    width: 25px;
+    height: auto;
+    margin-right: 5px;
+}
+
 /* анимация появления */
 @keyframes fadeIn {
   from {

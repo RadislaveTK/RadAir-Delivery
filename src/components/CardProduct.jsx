@@ -28,7 +28,7 @@ export default function CardProduct({ product, addProduct, children, ...props })
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Производитель:</b> {product.producer}</p>
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Страна:</b> {product.country}</p>
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Цена:</b> {product.price} тг</p>
-            <button onClick={(e) => { e.stopPropagation(); addProduct(product); }}>
+            <button onClick={(e) => { e.stopPropagation(); addProduct(product); closeModal() }}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {product.price} тг
                 </button>
