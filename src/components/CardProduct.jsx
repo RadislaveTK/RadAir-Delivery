@@ -19,9 +19,9 @@ export default function CardProduct({ product, addProduct, children, ...props })
             className="modal-content"
             onClick={(e) => e.stopPropagation()} // чтобы клик внутри окна не закрывал модалку
           >
-            <button className="modal-close" onClick={closeModal}>
+            <span className="modal-close" onClick={closeModal}>
               <img src="/assets/icons/close.svg" width={30} height={30} alt="close" />
-            </button>
+            </span>
             <img src={product.img} alt={product.name} className="modal-img" />
             <h2 style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}>{product.name}</h2>
             <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Описание:</b> {product.desc}</p>
