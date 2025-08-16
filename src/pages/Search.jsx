@@ -13,8 +13,8 @@ export default function SearchP() {
   const [showNotification, setShowNotification] = useState(false);
 
   const [page, setPage] = useState(1);
-  const [nextPageUrl, setNextPageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const containerRef = useRef(null);
 
@@ -33,61 +33,54 @@ export default function SearchP() {
     setTimeout(() => setShowNotification(false), 2000);
   };
 
-  // Делаем debounce для поиска
+  // debounce для поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
-      setPage(1); // сброс страницы при новом поиске
+      setPage(1); // сброс страницы
     }, 700);
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Загружаем первую страницу при изменении поиска
+  // загрузка данных
   useEffect(() => {
-    if (debouncedValue === "" && page !== 1) return; // предотвращаем двойной вызов
+    if (!debouncedValue) {
+      setProducts([]);
+      setHasMore(false);
+      return;
+    }
 
-    let url =
-      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
-    const params = [];
-    if (debouncedValue) params.push(`name=${encodeURIComponent(debouncedValue)}`);
-    params.push(`page=1`);
-    url += "?" + params.join("&");
+    const url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
+      debouncedValue
+    )}&page=${page}`;
 
     setLoading(true);
     fetch(url)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Ошибка сети");
+        return res.json();
+      })
       .then((data) => {
-        setProducts(data.data);
-        setNextPageUrl(data.next_page_url);
-        console.log(data.next_page_url);
+        if (page === 1) {
+          setProducts(data.data || []);
+        } else {
+          setProducts((prev) => [...prev, ...(data.data || [])]);
+        }
+        setHasMore(!!data.next_page_url);
+      })
+      .catch((err) => {
+        console.error("Ошибка загрузки:", err);
       })
       .finally(() => setLoading(false));
-  }, [debouncedValue]);
+  }, [debouncedValue, page]);
 
-  // Загружаем следующую страницу при изменении page
-  useEffect(() => {
-    if (page === 1) return; // первая страница уже загружена
-    if (!nextPageUrl) return;
-
-    setLoading(true);
-    fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page="+page)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts((prev) => [...prev, ...data.data]);
-        setNextPageUrl(data.next_page_url);
-        console.log(data.next_page_url);
-        
-      })
-      .finally(() => setLoading(false));
-  }, [page]);
-
-  // Ловим скролл внутри контейнера
+  // скролл
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
       if (scrollTop + clientHeight >= scrollHeight - 50) {
-        if (nextPageUrl && !loading) {
+        if (hasMore && !loading) {
           setPage((prev) => prev + 1);
         }
       }
@@ -95,7 +88,7 @@ export default function SearchP() {
     const container = containerRef.current;
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [nextPageUrl, loading]);
+  }, [hasMore, loading]);
 
   return (
     <>
@@ -154,6 +147,9 @@ export default function SearchP() {
               </CardProduct>
             ))}
             {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
+            {!loading && products.length === 0 && debouncedValue && (
+              <p style={{ textAlign: "center" }}>Ничего не найдено</p>
+            )}
           </div>
         </div>
       </Main>
