@@ -14,7 +14,6 @@ export default function SearchP() {
 
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
 
   const containerRef = useRef(null);
 
@@ -33,22 +32,42 @@ export default function SearchP() {
     setTimeout(() => setShowNotification(false), 2000);
   };
 
-  // debounce для поиска
+  // debounce поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
-      setPage(1); // сброс страницы
+      setPage(1); // сброс страницы при новом поиске
     }, 700);
     return () => clearTimeout(timer);
   }, [value]);
 
-  // загрузка данных
+  // загрузка первой страницы
   useEffect(() => {
     if (!debouncedValue) {
       setProducts([]);
-      setHasMore(false);
       return;
     }
+
+    const url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
+      debouncedValue
+    )}&page=1`;
+
+    setLoading(true);
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error("Ошибка сети");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data.data || []);
+      })
+      .catch((err) => console.error("Ошибка загрузки:", err))
+      .finally(() => setLoading(false));
+  }, [debouncedValue]);
+
+  // подгрузка следующей страницы
+  useEffect(() => {
+    if (page === 1 || !debouncedValue) return;
 
     const url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
       debouncedValue
@@ -61,34 +80,25 @@ export default function SearchP() {
         return res.json();
       })
       .then((data) => {
-        if (page === 1) {
-          setProducts(data.data || []);
-        } else {
-          setProducts((prev) => [...prev, ...(data.data || [])]);
-        }
-        setHasMore(!!data.next_page_url);
+        setProducts((prev) => [...prev, ...(data.data || [])]);
       })
-      .catch((err) => {
-        console.error("Ошибка загрузки:", err);
-      })
+      .catch((err) => console.error("Ошибка загрузки:", err))
       .finally(() => setLoading(false));
-  }, [debouncedValue, page]);
+  }, [page]);
 
-  // скролл
+  // ловим скролл
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 50) {
-        if (hasMore && !loading) {
-          setPage((prev) => prev + 1);
-        }
+      if (scrollTop + clientHeight >= scrollHeight - 50 && !loading) {
+        setPage((prev) => prev + 1);
       }
     };
     const container = containerRef.current;
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loading]);
+  }, [loading]);
 
   return (
     <>
@@ -147,9 +157,6 @@ export default function SearchP() {
               </CardProduct>
             ))}
             {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
-            {!loading && products.length === 0 && debouncedValue && (
-              <p style={{ textAlign: "center" }}>Ничего не найдено</p>
-            )}
           </div>
         </div>
       </Main>
