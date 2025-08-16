@@ -32,7 +32,7 @@ export default function SearchP() {
     setTimeout(() => setShowNotification(false), 2000);
   };
 
-  // debounce поиска
+  // Делаем debounce для поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
@@ -41,58 +41,49 @@ export default function SearchP() {
     return () => clearTimeout(timer);
   }, [value]);
 
-  // загрузка первой страницы
+  // Загружаем первую страницу при изменении поиска
   useEffect(() => {
-    if (!debouncedValue) {
-      setProducts([]);
-      return;
-    }
+    if (debouncedValue === "" && page !== 1) return; // предотвращаем двойной вызов
 
-    const url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
-      debouncedValue
-    )}&page=1`;
+    let url =
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
+    const params = [];
+    if (debouncedValue) params.push(`name=${encodeURIComponent(debouncedValue)}`);
+    params.push(`page=1`);
+    url += "?" + params.join("&");
 
     setLoading(true);
     fetch(url)
-      .then((res) => {
-        if (!res.ok) throw new Error("Ошибка сети");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        setProducts(data.data || []);
+        setProducts(data.data);
       })
-      .catch((err) => console.error("Ошибка загрузки:", err))
       .finally(() => setLoading(false));
   }, [debouncedValue]);
 
-  // подгрузка следующей страницы
+  // Загружаем следующую страницу при изменении page
   useEffect(() => {
-    if (page === 1 || !debouncedValue) return;
-
-    const url = `https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?name=${encodeURIComponent(
-      debouncedValue
-    )}&page=${page}`;
+    if (page === 1) return; // первая страница уже загружена
 
     setLoading(true);
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) throw new Error("Ошибка сети");
-        return res.json();
-      })
+    fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page="+page)
+      .then((res) => res.json())
       .then((data) => {
-        setProducts((prev) => [...prev, ...(data.data || [])]);
+        setProducts((prev) => [...prev, ...data.data]);
+        
       })
-      .catch((err) => console.error("Ошибка загрузки:", err))
       .finally(() => setLoading(false));
   }, [page]);
 
-  // ловим скролл
+  // Ловим скролл внутри контейнера
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 50 && !loading) {
-        setPage((prev) => prev + 1);
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
+        if (!loading) {
+          setPage((prev) => prev + 1);
+        }
       }
     };
     const container = containerRef.current;
