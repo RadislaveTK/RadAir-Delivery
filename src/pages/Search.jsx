@@ -29,62 +29,59 @@ export default function SearchP() {
     }
 
     localStorage.setItem("cartProducts", JSON.stringify(cart));
-
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 2000);
   };
 
-  // Отложенное обновление debouncedValue
+  // Делаем debounce для поиска
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
-      setPage(1); // Сбрасываем страницу при новом поиске
-      setProducts([]);
+      setPage(1); // сброс страницы при новом поиске
     }, 700);
-
     return () => clearTimeout(timer);
   }, [value]);
 
-  // Загрузка данных
-  const fetchProducts = async (url) => {
-    if (!url || loading) return;
-    setLoading(true);
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Ошибка при получении данных");
-      const data = await res.json();
-
-      // Laravel пагинация: data.data — массив товаров
-      if (page === 1) {
-        setProducts(data.data);
-      } else {
-        setProducts((prev) => [...prev, ...data.data]);
-      }
-      setNextPageUrl(data.next_page_url);
-    } catch (err) {
-      console.error("Ошибка:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Первый запрос и при изменении поиска
+  // Загружаем первую страницу при изменении поиска
   useEffect(() => {
+    if (debouncedValue === "" && page !== 1) return; // предотвращаем двойной вызов
+
     let url =
       "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
     const params = [];
     if (debouncedValue) params.push(`name=${encodeURIComponent(debouncedValue)}`);
-    if (page > 1) params.push(`page=${page}`);
-    if (params.length) url += "?" + params.join("&");
+    params.push(`page=1`);
+    url += "?" + params.join("&");
 
-    fetchProducts(url);
-  }, [debouncedValue, page]);
+    setLoading(true);
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data.data);
+        setNextPageUrl(data.next_page_url);
+      })
+      .finally(() => setLoading(false));
+  }, [debouncedValue]);
 
-  // Обработчик скролла (ленивая подгрузка)
+  // Загружаем следующую страницу при изменении page
+  useEffect(() => {
+    if (page === 1) return; // первая страница уже загружена
+    if (!nextPageUrl) return;
+
+    setLoading(true);
+    fetch(nextPageUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts((prev) => [...prev, ...data.data]);
+        setNextPageUrl(data.next_page_url);
+      })
+      .finally(() => setLoading(false));
+  }, [page]);
+
+  // Ловим скролл внутри контейнера
   useEffect(() => {
     const handleScroll = () => {
       if (!containerRef.current) return;
-
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
       if (scrollTop + clientHeight >= scrollHeight - 50) {
         if (nextPageUrl && !loading) {
@@ -92,7 +89,6 @@ export default function SearchP() {
         }
       }
     };
-
     const container = containerRef.current;
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
@@ -159,7 +155,6 @@ export default function SearchP() {
         </div>
       </Main>
 
-      {/* Уведомление */}
       <div className={`notification ${showNotification ? "show" : ""}`}>
         Товар добавлен в корзину
       </div>
