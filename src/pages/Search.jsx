@@ -59,7 +59,6 @@ export default function SearchP() {
       .then((data) => {
         setProducts(data.data);
         setNextPageUrl(data.next_page_url);
-        console.log(data.next_page_url);
       })
       .finally(() => setLoading(false));
   }, [debouncedValue]);
@@ -75,7 +74,6 @@ export default function SearchP() {
       .then((data) => {
         setProducts((prev) => [...prev, ...data.data]);
         setNextPageUrl(data.next_page_url);
-        console.log(data.next_page_url);
         
       })
       .finally(() => setLoading(false));
