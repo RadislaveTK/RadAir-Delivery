@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/ProductModal.css";
 
-export default function CardProduct({ product, children, ...props }) {
+export default function CardProduct({ product, addProduct, children, ...props }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
@@ -23,11 +23,15 @@ export default function CardProduct({ product, children, ...props }) {
               <img src="/assets/icons/close.svg" width={30} height={30} alt="close" />
             </button>
             <img src={product.img} alt={product.name} className="modal-img" />
-            <h2 style={{ textAlign: "left" }}>{product.name}</h2>
-            <p style={{ textAlign: "left" }}><b>Описание:</b> {product.desc}</p>
-            <p style={{ textAlign: "left" }}><b>Производитель:</b> {product.producer}</p>
-            <p style={{ textAlign: "left" }}><b>Страна:</b> {product.country}</p>
-            <p style={{ textAlign: "left" }}><b>Цена:</b> {product.price} тг</p>
+            <h2 style={{ textAlign: "left", whiteSpace: "normal", }}>{product.name}</h2>
+            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Описание:</b> {product.desc}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Производитель:</b> {product.producer}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Страна:</b> {product.country}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Цена:</b> {product.price} тг</p>
+            <button onClick={(e) => { e.stopPropagation(); addProduct(product); }}>
+                  <img src="/assets/icons/money.svg" alt="money" />
+                  {product.price} тг
+                </button>
           </div>
         </div>
       )}

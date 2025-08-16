@@ -38,6 +38,7 @@
   border: 2px solid #963736;
   box-shadow: 1px 1px 0 0 #ff9800, 4px 4px 4px 0 #00000040;
   color: #963736;
+  font-size: clamp(10px, 1rem, 45px);
 }
 
 .modal-content > h2,
