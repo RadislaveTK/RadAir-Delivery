@@ -38,6 +38,7 @@ export default function SearchP() {
     const timer = setTimeout(() => {
       setDebouncedValue(value.trim());
       setPage(1); // сброс страницы при новом поиске
+      setProducts([]); 
     }, 700);
     return () => clearTimeout(timer);
   }, [value]);
