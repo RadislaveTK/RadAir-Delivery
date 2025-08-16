@@ -77,10 +77,14 @@ export default function SearchP() {
     if (!nextPageUrl) return;
 
     setLoading(true);
-    fetch(
-      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=" +
-        page
-    )
+    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page=";
+    const params = [];
+    if (debouncedValue)
+      params.push(`name=${encodeURIComponent(debouncedValue)}`);
+    params.push('page='+page);
+    url += "?" + params.join("&");
+    
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Ошибка загрузки");
         return res.json();
@@ -170,9 +174,13 @@ export default function SearchP() {
               </CardProduct>
             ))}
             {!loading && products.length === 0 && (
-              <p style={{ textAlign: "center" }}>Ничего не найдено</p>
+              <p style={{ textAlign: "center", width: "150px" }}>
+                Ничего не найдено
+              </p>
             )}
-            {loading && <p style={{ textAlign: "center" }}>Загрузка...</p>}
+            {loading && (
+              <p style={{ textAlign: "center", width: "150px" }}>Загрузка...</p>
+            )}
           </div>
         </div>
       </Main>
