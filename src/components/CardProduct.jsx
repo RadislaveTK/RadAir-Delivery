@@ -20,7 +20,7 @@ export default function CardProduct({ product, children, ...props }) {
             onClick={(e) => e.stopPropagation()} // чтобы клик внутри окна не закрывал модалку
           >
             <button className="modal-close" onClick={closeModal}>
-              ✖
+              <img src="/assets/icons/close.svg"  alt="close" />
             </button>
             <img src={product.img} alt={product.name} className="modal-img" />
             <h2>{product.name}</h2>
