@@ -169,6 +169,7 @@ export default function CategorySP({ category }) {
               flexDirection: "column",
               alignItems: "center",
               marginTop: "10px",
+              width: "100%",
             }}
           >
             <div
