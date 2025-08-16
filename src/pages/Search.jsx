@@ -13,6 +13,7 @@ export default function SearchP() {
   const [showNotification, setShowNotification] = useState(false);
 
   const [page, setPage] = useState(1);
+  const [nextPageUrl, setNextPageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const containerRef = useRef(null);
@@ -57,6 +58,8 @@ export default function SearchP() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.data);
+        setNextPageUrl(data.next_page_url);
+        console.log(data.next_page_url);
       })
       .finally(() => setLoading(false));
   }, [debouncedValue]);
@@ -64,12 +67,15 @@ export default function SearchP() {
   // Загружаем следующую страницу при изменении page
   useEffect(() => {
     if (page === 1) return; // первая страница уже загружена
+    if (!nextPageUrl) return;
 
     setLoading(true);
     fetch("https://radair-delivery-back-production-21b4.up.railway.app/api/product/search?page="+page)
       .then((res) => res.json())
       .then((data) => {
         setProducts((prev) => [...prev, ...data.data]);
+        setNextPageUrl(data.next_page_url);
+        console.log(data.next_page_url);
         
       })
       .finally(() => setLoading(false));
@@ -81,7 +87,7 @@ export default function SearchP() {
       if (!containerRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
       if (scrollTop + clientHeight >= scrollHeight - 50) {
-        if (!loading) {
+        if (nextPageUrl && !loading) {
           setPage((prev) => prev + 1);
         }
       }
@@ -89,7 +95,7 @@ export default function SearchP() {
     const container = containerRef.current;
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, [loading]);
+  }, [nextPageUrl, loading]);
 
   return (
     <>
