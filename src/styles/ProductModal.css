@@ -75,7 +75,7 @@ p {
   background: #963736;
   color: #f7f6f3;
   display: flex;
-  font-size: 15px;
+  font-size: 18px;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -87,7 +87,7 @@ p {
 }
 
 .modal-content > button > img {
-  width: 25px;
+  width: 30px;
   height: auto;
   margin-right: 5px;
 }
