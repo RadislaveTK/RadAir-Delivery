@@ -23,11 +23,11 @@ export default function CardProduct({ product, addProduct, children, ...props })
               <img src="/assets/icons/close.svg" width={30} height={30} alt="close" />
             </button>
             <img src={product.img} alt={product.name} className="modal-img" />
-            <h2 style={{ textAlign: "left", whiteSpace: "normal", }}>{product.name}</h2>
-            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Описание:</b> {product.desc}</p>
-            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Производитель:</b> {product.producer}</p>
-            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Страна:</b> {product.country}</p>
-            <p style={{ textAlign: "left", whiteSpace: "normal", }}><b>Цена:</b> {product.price} тг</p>
+            <h2 style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}>{product.name}</h2>
+            <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Описание:</b> {product.desc}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Производитель:</b> {product.producer}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Страна:</b> {product.country}</p>
+            <p style={{ textAlign: "left", whiteSpace: "normal", overflow: "visible", }}><b>Цена:</b> {product.price} тг</p>
             <button onClick={(e) => { e.stopPropagation(); addProduct(product); }}>
                   <img src="/assets/icons/money.svg" alt="money" />
                   {product.price} тг
