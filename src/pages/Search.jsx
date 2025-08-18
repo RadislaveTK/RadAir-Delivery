@@ -122,7 +122,7 @@ export default function SearchP() {
       <Header />
       <BgDop />
 
-      <Main>
+      <Main style={{marginTop: "20px"}}>
         <div className="search">
           <label htmlFor="inp_search">
             <img src="/assets/icons/search.svg" alt="search" />
