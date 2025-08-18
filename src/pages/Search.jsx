@@ -156,7 +156,7 @@ export default function SearchP() {
             className="card-products"
             ref={containerRef}
             style={{
-              maxHeight: "70vh",
+              // maxHeight: "70vh",
               overflowY: "auto",
               padding: "10px",
             }}
