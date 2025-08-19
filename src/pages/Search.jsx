@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";

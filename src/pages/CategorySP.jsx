@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import CardProduct from "../components/CardProduct";
-import "../styles/SearchP.css";
 import "../styles/CategorySP.css";
 
 export default function CategorySP({ category }) {
