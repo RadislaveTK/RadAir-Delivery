@@ -10,8 +10,8 @@ export default function Header() {
       style={{
         width: "100%",
         // position: "fixed",
-        left: 0,
-        top: 0,
+        // left: 0,
+        // top: 0,
         zIndex: 20,
         height: "80px",
         maxHeight: "80px",
