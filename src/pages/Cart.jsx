@@ -3,7 +3,6 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import { useState, useEffect } from "react";
-import "../styles/SearchP.css";
 import "../styles/Cart.css";
 
 export default function Cart() {
