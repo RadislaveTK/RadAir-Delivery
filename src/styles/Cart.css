@@ -112,7 +112,7 @@
   font-weight: bold;
 }
 
-.btn-valume {
+.btn-volume {
   display: flex;
   background: rgb(150, 55, 54);
   border-radius: 5px;
@@ -125,7 +125,7 @@
   align-items: center;
 }
 
-.btn-valume button {
+.btn-volume button {
   background: none;
   color: #fff;
   font-size: 25px;
