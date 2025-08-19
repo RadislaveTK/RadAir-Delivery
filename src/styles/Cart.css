@@ -155,12 +155,10 @@
   outline: none;
 }
 
-/* При нажатии */
 .check:checked {
   background-color: white;
 }
 
-/* Внутренний круг */
 .check:checked::after {
   content: "";
   position: absolute;
