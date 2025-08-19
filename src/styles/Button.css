@@ -1,0 +1,22 @@
+.btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #963736;
+  border-radius: 15px;
+  border: none;
+  font-size: 12px;
+  transition: all 0.15s;
+  box-shadow: 3px 3px 0px 0px rgba(255, 152, 0, 1),
+    0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.btn:active {
+  opacity: 90%;
+}
+
+.btn:disabled {
+  opacity: 90%;
+}

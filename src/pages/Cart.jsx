@@ -4,6 +4,7 @@ import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import { useState, useEffect } from "react";
 import "../styles/SearchP.css";
+import "../styles/Cart.css";
 
 export default function Cart() {
   const [products, setProducts] = useState([]);
@@ -87,47 +88,21 @@ export default function Cart() {
               checked={allSelected}
               onChange={(e) => toggleSelectAll(e.target.checked)}
             />
-            <h3
-              className="text"
-              style={{
-                color: "#963736",
-                textShadow: "2px 2px 0 0 #ff9800, 4px 4px 4px 0 #00000040",
-                marginLeft: "10px",
-              }}
-            >
-              Выбрать все
-            </h3>
+            <h3>Выбрать все</h3>
           </label>
           <hr />
 
           <div className="card-products-cart">
             {products.map((p) => (
-              <div key={p.id} className="card-product">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    padding: " 0 2px",
-                  }}
-                >
+              <div key={p.id} className="card-product-cart">
+                <div className="zone-fun">
                   <input
                     type="checkbox"
                     checked={p.selected}
                     onChange={() => toggleSelectOne(p.id)}
                     className="check"
                   />
-                  <button
-                    onClick={() => removeProduct(p.id)}
-                    style={{
-                      border: "none",
-                      background: "none",
-                      width: "30px",
-                      height: "30px",
-                    }}
-                  >
+                  <button onClick={() => removeProduct(p.id)}>
                     <img
                       src="/assets/icons/delete.svg"
                       width="100%"
@@ -137,24 +112,14 @@ export default function Cart() {
                   </button>
                 </div>
 
-                <img
-                  src={p.img}
-                  alt={p.name}
-                />
+                <img src={p.img} alt={p.name} />
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    width: "100%",
-                  }}
-                >
+                <div className="zone-des">
                   <h3 className="t-o">{p.name}</h3>
                   <p>{p.producer}</p>
                 </div>
 
-                <div className="card-pr-b">
+                <div className="btn-volume">
                   <button onClick={() => changeQuantity(p.id, -1)}>-</button>
                   <span>{p.count}</span>
                   <button onClick={() => changeQuantity(p.id, 1)}>+</button>
@@ -164,29 +129,11 @@ export default function Cart() {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "80vw",
-            marginTop: "15px",
-            padding: "5px 0px",
-          }}
-          className="btn"
-        >
-          <span
-            style={{
-              fontSize: "15px",
-              fontWeight: "bold",
-            }}
-          >
-            К оплате
-          </span>
-          <span>
+        <div className="btn pay">
+          <span>К оплате</span>
+          <p>
             {totalQuantity} шт, {totalPrice} тг
-          </span>
+          </p>
         </div>
       </Main>
 

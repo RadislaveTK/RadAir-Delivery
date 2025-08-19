@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../styles/ProductModal.css";
+import "../styles/CardProduct.css";
 
 export default function CardProduct({ product, addProduct, children, ...props }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,7 @@ export default function CardProduct({ product, addProduct, children, ...props })
 
   return (
     <>
-      <div {...props} className="card" onClick={openModal}>
+      <div {...props} className="card-product" onClick={openModal}>
         {children}
       </div>
 

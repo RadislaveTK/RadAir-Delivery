@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import BackBtn from "../components/BackBtn";
 import { useAuth } from "../stores/AuthContext";
 import Cookies from "js-cookie";
+import "../styles/Profile.css";
 
 export default function Profile() {
   const { user, setUser } = useAuth();

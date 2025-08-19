@@ -1,0 +1,163 @@
+.form-a {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.auth-input-div {
+  height: 50px;
+  width: 90%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 4px 0px rgba(34, 60, 80, 0.25);
+}
+
+.auth-input-div > label {
+  width: 35px;
+  height: 100%;
+  background: #282828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ff9800;
+  border-right: none;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.auth-input-div > input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ff9800;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  background-color: #963736;
+  color: #fff;
+  padding-left: 10px;
+  font-size: 15px;
+  transition: all 1s linear;
+}
+
+.auth-input-div > input::placeholder {
+  color: #fff;
+  opacity: 50%;
+  font-size: 12px;
+}
+
+.auth-input-div > input:focus-visible,
+.auth-input-div > input:focus {
+  border: 2px solid #ff9800;
+  transition: border 0s linear;
+  outline: none;
+}
+
+.auth-input-div:focus-within input::placeholder {
+  font-size: 15px;
+  transition: all 0.3s linear;
+}
+
+.auth-input-div:focus-within label {
+  background: #ff9800;
+  border-color: #ff9800;
+}
+
+.auth-input-div:focus-within label img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+#inp_req[type="checkbox"] {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #963736;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  margin: 0;
+}
+
+#inp_req[type="checkbox"]:checked {
+  /* стили для выбранного состояния */
+  background-color: #963736;
+  border-color: #632424;
+  background-image: url(/public/assets/icons/checkbox.svg);
+  background-position: center;
+  background-origin: border-box;
+  background-size: contain;
+}
+
+.inp_req[type="checkbox"]:active {
+  filter: brightness(90%);
+}
+
+.inp-text {
+  text-security: none;
+  -webkit-text-security: none;
+  -mox-text-security: none;
+}
+
+.inp-password {
+  text-security: disc;
+  -webkit-text-security: disc;
+  -mox-text-security: disc;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+.btn-show-pass {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.rem-pass {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.rem-pass > label {
+  color: #963736;
+  font-weight: bold;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.login-signup-hint {
+  color: #963736;
+  font-weight: bold;
+}
+
+.login-signup-hint > a {
+  color: #ff9800;
+}
+
+.btn-enter {
+  width: 250px;
+  height: 50px;
+  font-size: 20px;
+  margin-top: 20px;
+}

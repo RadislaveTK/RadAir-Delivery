@@ -1,3 +1,5 @@
+import "../styles/Button.css";
+
 export default function Button({ children, style, onClick, disabled, className = "", ...props }) {
   return (
     <button

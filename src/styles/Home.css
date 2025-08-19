@@ -1,0 +1,6 @@
+.card-container {
+  display: grid;
+  grid-template-areas: "ff pt" "rr  pt";
+  gap: 15px;
+  margin-top: 10px;
+}

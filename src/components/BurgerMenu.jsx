@@ -12,11 +12,6 @@ export default function BurgerMenu() {
   const { address } = useContext(GeoContext);
   const { user } = useAuth();
 
-  // useEffect(()=>{
-  //   console.log(address);
-
-  // }, []);
-
   // Функция переключения состояния
   const toggleMenu = () => {
     if (toggle) {

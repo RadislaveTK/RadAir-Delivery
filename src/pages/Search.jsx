@@ -4,7 +4,7 @@ import BgDop from "../components/BgDop";
 import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import CardProduct from "../components/CardProduct";
-import "../styles/SearchP.css";
+import "../styles/CategorySP.css";
 
 export default function SearchP() {
   const [value, setValue] = useState("");
@@ -155,11 +155,6 @@ export default function SearchP() {
           <div
             className="card-products"
             ref={containerRef}
-            style={{
-              // maxHeight: "70vh",
-              overflowY: "auto",
-              padding: "10px",
-            }}
           >
             {products.map((p) => (
               <CardProduct key={p.id} style={{ height: "220px" }} product={p} addProduct={addProduct}>

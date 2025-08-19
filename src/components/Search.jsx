@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import "../styles/SearchC.css"
 
 export default function Search() {
   const [value, setValue] = useState("");

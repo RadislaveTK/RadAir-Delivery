@@ -5,6 +5,7 @@ import Fotter from "../components/Fotter";
 import Main from "../components/Main";
 import CardProduct from "../components/CardProduct";
 import "../styles/SearchP.css";
+import "../styles/CategorySP.css";
 
 export default function CategorySP({ category }) {
   const [value, setValue] = useState("");
@@ -163,18 +164,9 @@ export default function CategorySP({ category }) {
           ""
         )}
         <div className="block bl">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginTop: "10px",
-              width: "100%",
-            }}
-          >
+          <div className="zone-search">
             <div
               className="search"
-              style={{ width: "80%", marginBottom: "10px", height: "80%," }}
             >
               <label htmlFor="inp_search">
                 <img src="/assets/icons/search.svg" alt="search" />
@@ -191,17 +183,26 @@ export default function CategorySP({ category }) {
             <hr />
           </div>
 
-          <div className="card-products" ref={containerRef} style={{
-              maxHeight: "70vh",
-              overflowY: "auto",
-              padding: "10px",
-            }}>
+          <div
+            className="card-products"
+            ref={containerRef}
+          >
             {products.map((p) => (
-              <CardProduct key={p.id} style={{ height: "220px" }} product={p} addProduct={addProduct}>
+              <CardProduct
+                key={p.id}
+                style={{ height: "220px" }}
+                product={p}
+                addProduct={addProduct}
+              >
                 <img src={p.img} alt={p.name} />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button onClick={(e) => { e.stopPropagation(); addProduct(p); }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addProduct(p);
+                  }}
+                >
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>

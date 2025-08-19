@@ -1,0 +1,12 @@
+.bg-panel {
+  position: absolute;
+  top: -40px;
+  right: -15%;
+  width: 414px;
+  height: 130px;
+  transform: rotate(25deg);
+  transform-origin: center center;
+  background: url(/public/assets/bgDop.png) no-repeat center center;
+  background-size: cover;
+  pointer-events: none;
+}

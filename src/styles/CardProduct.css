@@ -1,4 +1,4 @@
-.card {
+.card-product {
   width: auto;
   height: auto;
   display: flex;
@@ -20,6 +20,32 @@
   /* max-width: 150px; */
 }
 
-.card:active {
+.card-product:active {
   transform: scale(0.96); /* или 0.98 */
 }
+
+.card-product img {
+  height: 10vh;
+}
+
+.card-product > button {
+  background: #963736;
+  color: #f7f6f3;
+  display: flex;
+  font-size: 15px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  border-radius: 5px;
+  padding: 5px 0px;
+  font-weight: 500;
+}
+
+.card-product > button > img {
+  width: 25px;
+  height: auto;
+  margin-right: 5px;
+}
+
+
