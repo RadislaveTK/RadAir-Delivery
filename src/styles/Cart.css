@@ -125,7 +125,7 @@
   align-items: center;
 }
 
-.btn-valume > button {
+.btn-valume button {
   background: none;
   color: #fff;
   font-size: 25px;
