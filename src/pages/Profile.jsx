@@ -64,7 +64,7 @@ export default function Profile() {
 
       <Main>
         <BackBtn />
-        {/* <h1 style={{ marginTop: "20%", color: "#963736" }}>{user.name}</h1> */}
+        <h1 style={{ marginBottom: "20%", color: "#963736" }}>{user.name}</h1>
         <div className="profile-block">
           <div className="profile-inp">
             <div>
