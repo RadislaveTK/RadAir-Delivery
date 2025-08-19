@@ -77,11 +77,12 @@ export default function SearchP() {
     if (!nextPageUrl) return;
 
     setLoading(true);
-    let url = "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
+    let url =
+      "https://radair-delivery-back-production-21b4.up.railway.app/api/product/search";
     const params = [];
     if (debouncedValue)
       params.push(`name=${encodeURIComponent(debouncedValue)}`);
-    params.push('page='+page);
+    params.push("page=" + page);
     url += "?" + params.join("&");
 
     fetch(url)
@@ -137,7 +138,7 @@ export default function SearchP() {
           />
         </div>
 
-        <div className="block">
+        <div style={{ height: "90%" }} className="block">
           <div>
             <h1
               style={{
@@ -152,16 +153,23 @@ export default function SearchP() {
             <hr />
           </div>
 
-          <div
-            className="card-products"
-            ref={containerRef}
-          >
+          <div className="card-products" ref={containerRef}>
             {products.map((p) => (
-              <CardProduct key={p.id} style={{ height: "220px" }} product={p} addProduct={addProduct}>
+              <CardProduct
+                key={p.id}
+                style={{ height: "220px" }}
+                product={p}
+                addProduct={addProduct}
+              >
                 <img src={p.img} alt={p.name} />
                 <h3>{p.name}</h3>
                 <p>{p.producer}</p>
-                <button onClick={(e) => { e.stopPropagation(); addProduct(p); }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addProduct(p);
+                  }}
+                >
                   <img src="/assets/icons/money.svg" alt="money" />
                   {p.price} тг
                 </button>
