@@ -43,8 +43,7 @@
   overflow-x: hidden;
 }
 
-.modal-content > h2,
-p {
+.modal-content > h2 p {
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
