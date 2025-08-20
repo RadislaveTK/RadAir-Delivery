@@ -1,5 +1,4 @@
 .back-btn {
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -13,11 +12,11 @@
   color: #fff;
   font-size: 15px;
   padding: 0 10px;
-  top: 15%;
-  left: 5%;
   cursor: pointer;
   z-index: 14;
-  top: 20px;
   box-shadow: 3px 3px 0px 0px rgba(255, 152, 0, 1),
     0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    margin-bottom: auto;
+    margin-right: auto;
+    margin-left: 35px;
 }
